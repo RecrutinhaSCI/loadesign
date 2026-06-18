@@ -1,0 +1,228 @@
+// prisma/schema.prisma
+// ─────────────────────────────────────────────────
+// Loa Design Digital — Database Schema
+//
+// Provider: PostgreSQL (produção e dev recomendado).
+//
+// Para dev local, use:
+//   - docker-compose up -d   (sobe Postgres em loadesign/Backend)
+//   - ou aponte DATABASE_URL para um banco gerenciado (Neon, Supabase, Railway)
+//
+// Todos os campos JSON (tags, items, notifications) são armazenados como TEXT
+// (String) com JSON.stringify/parse no app — compatível com qualquer SGBD.
+// ─────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User (admin) ─────────────────────────────────
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String   // bcrypt hash
+  role      String   @default("ADMIN")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// ─── Lead (funil de prospecção) ──────────────────
+model Lead {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String?
+  company       String?
+  website       String?
+  source        String   @default("other")    // organic | paid | referral | social | email | other
+  status        String   @default("new")      // new | contacted | qualified | proposal | won | lost
+  service       String   @default("")
+  score         Int      @default(50)
+  value         Float    @default(0)
+  notes         String?
+  tags          String   @default("[]")        // JSON string array
+  assignedTo    String?
+  lastContactAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  client        Client?  @relation(fields: [clientId], references: [id])
+  clientId      String?
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+// ─── Client (cliente pagante) ────────────────────
+model Client {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  company       String?
+  instagram     String?
+  notes         String?
+  totalProjects Int      @default(0)
+  totalRevenue  Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  projects      Project[]
+  quotes        Quote[]
+  leads         Lead[]
+
+  @@map("clients")
+}
+
+// ─── Project ─────────────────────────────────────
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  status      String   @default("DRAFT")  // DRAFT | IN_PROGRESS | REVIEW | DONE | CANCELLED
+  progress    Int      @default(0)
+  value       Float    @default(0)
+  deadline    DateTime
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  client      Client?  @relation(fields: [clientId], references: [id])
+  clientId    String?
+  clientName  String   // denormalizado para listagens rápidas
+
+  @@index([status])
+  @@map("projects")
+}
+
+// ─── Service / Pacote ────────────────────────────
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  price       Float
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
+  items       String   @default("[]")   // JSON string array
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
+
+// ─── Quote (orçamento) ───────────────────────────
+model Quote {
+  id          String   @id @default(cuid())
+  clientName  String
+  clientEmail String   @default("")
+  clientPhone String   @default("")
+  status      String   @default("draft")   // draft | sent | accepted | rejected | expired
+  items       String   @default("[]")       // JSON: [{description, quantity, unitPrice}]
+  discount    Float    @default(0)
+  total       Float    @default(0)
+  notes       String?
+  validUntil  DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  client      Client?  @relation(fields: [clientId], references: [id])
+  clientId    String?
+
+  @@map("quotes")
+}
+
+// ─── Transaction (financeiro) ────────────────────
+model Transaction {
+  id          String   @id @default(cuid())
+  description String
+  client      String   @default("—")
+  type        String   // income | expense
+  value       Float
+  date        DateTime
+  category    String   @default("Outros")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([date])
+  @@map("transactions")
+}
+
+// ─── AgencySettings (singleton) ──────────────────
+model AgencySettings {
+  id         String   @id @default("singleton")
+  name       String
+  email      String
+  whatsapp   String
+  instagram  String
+  website    String
+  ownerName  String
+  ownerEmail String
+  // notificações como JSON string para flexibilidade
+  notifications String @default("{\"newLead\":true,\"statusChange\":true,\"paymentReceived\":true,\"projectDelivered\":true}")
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@map("agency_settings")
+}
+
+// ─── Testimonial (depoimento) ────────────────────
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  avatar    String?
+  text      String
+  result    String?
+  stars     Int      @default(5)
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+// ─── PortfolioItem ───────────────────────────────
+model PortfolioItem {
+  id          String   @id @default(cuid())
+  title       String
+  client      String
+  category    String   @default("social-media")
+  description String?
+  imageUrl    String
+  link        String?
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("portfolio_items")
+}
+
+// ─── ContactMessage (form do site público) ───────
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String
+  instagram String?
+  service   String?
+  message   String
+  status    String   @default("NEW")
+  leadId    String?  // se gerou Lead, referência
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact_messages")
+}

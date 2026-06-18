@@ -1,0 +1,32 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Postgres local para desenvolvimento — Loa Design Backend
+#
+# Subir:    docker compose up -d
+# Parar:    docker compose down
+# Reset:    docker compose down -v   (apaga volume = perde dados)
+#
+# DATABASE_URL para .env:
+#   postgresql://loa:loa@localhost:5432/loadesign?schema=public
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: loa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: loa
+      POSTGRES_PASSWORD: loa
+      POSTGRES_DB: loadesign
+    ports:
+      - "5432:5432"
+    volumes:
+      - loa_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loa -d loadesign"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  loa_pgdata:
