@@ -134,8 +134,7 @@ export function LoginPage() {
 
           <div className="mt-5 pt-4 border-t border-dark-border">
             <p className="text-xs text-white/20 text-center">
-              Demo: <span className="text-white/35">admin@loadesign.com</span> /{' '}
-              <span className="text-white/35">admin123</span>
+              <span className="text-white/35"></span>
             </p>
           </div>
         </motion.div>
