@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = "5554999912694"; // Substitua pelo número real
+const WHATSAPP_NUMBER = "555499481393"; // Substitua pelo número real
 const INSTAGRAM_URL = "https://instagram.com/loa.ddigital/"; // Substitua pela URL real
 const EMAIL = "loadesigndigital@gmail.com"; // Substitua pelo e-mail real
 

@@ -61,7 +61,7 @@ export function SectionSubtext({ children, className = "" }) {
 }
 
 // ─── WhatsApp CTA link ────────────────────────────────────────────────────────
-export const WHATSAPP_NUMBER = "5554999912694"; // ← substituir pelo número real
+export const WHATSAPP_NUMBER = "555499481393"; // ← substituir pelo número real
 export const INSTAGRAM_URL   = "https://instagram.com/loa.ddigital/"; // ← substituir
 export const EMAIL           = "loadesigndigital@gmail.com"; // ← substituir
 

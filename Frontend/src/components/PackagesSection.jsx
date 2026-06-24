@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const WHATSAPP_NUMBER = "5554999912694"; // Substitua pelo número real
+const WHATSAPP_NUMBER = "555499481393"; // Substitua pelo número real
 
 function useRevealDelay(delay = 0, threshold = 0.12) {
   const ref = useRef(null);

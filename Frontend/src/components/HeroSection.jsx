@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const WHATSAPP_NUMBER = "5554999912694";
+const WHATSAPP_NUMBER = "555499481393";
 const INSTAGRAM_URL = "https://instagram.com/loa.ddigital/";
 
 function useFadeIn(delay = 0) {

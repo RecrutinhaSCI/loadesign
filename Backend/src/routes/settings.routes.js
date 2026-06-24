@@ -16,7 +16,7 @@ const DEFAULTS = {
   id: "singleton",
   name: "Loa Design",
   email: "loadesigndigital@gmail.com",
-  whatsapp: "5554999912694",
+  whatsapp: "555499481393",
   instagram: "@loadesigndigital",
   website: "https://loadesign.com.br",
   ownerName: "Loa",

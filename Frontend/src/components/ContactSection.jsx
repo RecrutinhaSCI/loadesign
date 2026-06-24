@@ -358,7 +358,7 @@ export default function ContactSection() {
             </p>
 
             <div className="flex flex-col gap-3">
-              <ChannelLink href="https://wa.me/5554999912694"
+              <ChannelLink href="https://wa.me/555499481393"
                 icon={ICONS.whatsapp} label="WhatsApp" sub="Atendimento rápido e humano" />
               <ChannelLink href={INSTAGRAM_URL}
                 icon={ICONS.instagram} label="Instagram" sub="@loa.ddigital — veja nosso portfólio" />

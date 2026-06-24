@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const WHATSAPP_NUMBER = "5554999912694";
+const WHATSAPP_NUMBER = "555499481393";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);

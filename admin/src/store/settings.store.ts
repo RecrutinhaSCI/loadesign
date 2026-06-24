@@ -6,7 +6,7 @@ import type { AgencySettings } from '@/types'
 const DEFAULTS: AgencySettings = {
   name: 'Loa Design',
   email: 'loadesigndigital@gmail.com',
-  whatsapp: '5554999912694',
+  whatsapp: '555499481393',
   instagram: '@loadesigndigital',
   website: 'https://loadesign.com.br',
   ownerName: 'Loa',
