@@ -377,8 +377,6 @@ export default function ContactSection() {
                 style={{ fontFamily: fonts.body, color: colors.inkMid }}>
                 Segunda a sexta:{" "}
                 <strong className="font-medium" style={{ color: colors.ink }}>9h às 18h</strong><br />
-                Respondemos em até{" "}
-                <strong className="font-medium" style={{ color: colors.ink }}>2 horas úteis.</strong>
               </p>
             </div>
 

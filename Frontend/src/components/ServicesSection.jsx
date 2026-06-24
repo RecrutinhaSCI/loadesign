@@ -52,27 +52,14 @@ const services = [
       "Edição profissional de vídeos para reels, stories e campanhas. Conteúdo dinâmico com transições suaves e trilha sonora estratégica.",
     tags: ["Reels", "Shorts", "Transições", "Motion"],
   },
-  {
-    icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-        <path d="M2 17l10 5 10-5" />
-        <path d="M2 12l10 5 10-5" />
-      </svg>
-    ),
-    title: "Identidade Visual",
-    subtitle: "Branding & Design",
-    description:
-      "Criação de identidade visual completa: logotipo, paleta de cores, tipografia e manual de marca. Sua empresa com cara profissional.",
-    tags: ["Logo", "Paleta", "Tipografia", "Manual"],
-  },
+
   {
     icon: (
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
       </svg>
     ),
-    title: "Gestão de Conteúdo",
+    title: "Gestão de Redes",
     subtitle: "Instagram & Redes",
     description:
       "Planejamento, criação e publicação de conteúdo estratégico para Instagram e demais redes. Consistência que gera engajamento e crescimento.",
@@ -90,19 +77,6 @@ const services = [
     description:
       "Design pensado para converter. Cada elemento visual é criado com propósito: atrair, engajar e transformar seguidores em clientes.",
     tags: ["Conversão", "CTA", "Engajamento", "ROI"],
-  },
-  {
-    icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-        <path d="M8 21h8m-4-4v4" />
-      </svg>
-    ),
-    title: "Apresentações",
-    subtitle: "Slides & Pitches",
-    description:
-      "Apresentações visuais impactantes para reuniões, pitches e propostas comerciais. Design que impressiona e transmite credibilidade.",
-    tags: ["Slides", "Pitch", "Proposta", "Visual"],
   },
 ];
 
