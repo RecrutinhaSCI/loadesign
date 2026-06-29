@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { fetchPublicPackages } from "../api/packages";
 
-const WHATSAPP_NUMBER = "555499481393"; // Substitua pelo número real
+// WhatsApp oficial da Laura — pode ser sobrescrito via .env (VITE_WHATSAPP)
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP ?? "5554999912694";
 
 function useRevealDelay(delay = 0, threshold = 0.12) {
   const ref = useRef(null);
@@ -26,54 +28,20 @@ function useRevealDelay(delay = 0, threshold = 0.12) {
   return ref;
 }
 
-const packages = [
-  {
-    name: "Básico",
-    tag: "Para começar",
-    description: "Ideal para quem está dando os primeiros passos no digital e quer consistência com investimento acessível.",
-    items: [
-      "2 Reels por mês",
-      "3 Posts para feed",
-      "Indicado para negócios que estão iniciando sua presença digital e precisam de uma comunicação visual organizada e profissional",
-,
-    ],
-    featured: false,
-    cta: "Começar agora",
-    message: "Olá! Tenho interesse no Pacote Básico da Loa Design Digital. Pode me passar mais informações?",
-  },
-  {
-    name: "Intermediário",
-    tag: "Mais popular",
-    description: "Para marcas que querem crescer com constância. Mais conteúdo, mais presença, mais resultados.",
-    items: [
-      "4 Reels por mês",
-      "6 Posts para feed",
-      "Indicado para negócios que já possuem presença digital e buscam mais consistência, engajamento e profissionalismo nas redes sociais"
-    ],
-    featured: true,
-    cta: "Quero este pacote",
-    message: "Olá! Tenho interesse no Pacote Intermediário da Loa Design Digital. Pode me passar mais informações?",
-  },
-  {
-    name: "Avançado",
-    tag: "Presença total",
-    description: "Gestão completa de conteúdo para marcas que levam o digital a sério e querem dominar o mercado.",
-    items: [
-      "6 Reels por mês",
-      "10 Posts para feed",
-      "Indicado para négocios que buscam crescimento, posicionamento e maior impacto no digital.",
-    ],
-    featured: false,
-    cta: "Falar com a Laura",
-    message: "Olá! Tenho interesse no Pacote Avançado da Loa Design Digital. Pode me passar mais informações?",
-  },
-];
+// Gera URL do WhatsApp com mensagem personalizada por pacote.
+function buildWhatsappLink(pkgName) {
+  const msg = `Olá, Laura! Tenho interesse no ${pkgName}. Pode me passar mais detalhes?`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
 
-function PackageCard({ pkg, index }) {
+function PackageCard({ pkg, index, total }) {
   const ref = useRevealDelay(index * 120, 0.1);
   const [hovered, setHovered] = useState(false);
 
   const isActive = pkg.featured || hovered;
+  // tag visual derivada do `featured` da API
+  const tag = pkg.featured ? "Mais popular" : `Pacote ${index + 1} de ${total}`;
+  const cta = pkg.featured ? "Quero este pacote" : "Falar com a Laura";
 
   return (
     <div
@@ -93,7 +61,6 @@ function PackageCard({ pkg, index }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Top bar for featured */}
       {pkg.featured && (
         <div
           className="absolute top-0 left-0 right-0 h-0.75"
@@ -111,7 +78,7 @@ function PackageCard({ pkg, index }) {
             color: isActive ? "rgba(255,255,255,0.9)" : "#B08B7D",
           }}
         >
-          {pkg.tag}
+          {tag}
         </span>
 
         {/* Name */}
@@ -144,10 +111,10 @@ function PackageCard({ pkg, index }) {
 
         {/* Items */}
         <ul className="flex flex-col gap-3 mb-8 flex-1">
-          {pkg.items.map((item) => (
-            <li key={item} className="flex items-center gap-3">
+          {(pkg.items ?? []).map((item, idx) => (
+            <li key={`${idx}-${item}`} className="flex items-start gap-3">
               <span
-                className="shrink-0 w-4 h-4 rounded-full flex items-center justify-center transition-all duration-300"
+                className="shrink-0 w-4 h-4 rounded-full flex items-center justify-center transition-all duration-300 mt-1"
                 style={{
                   background: isActive ? "rgba(255,255,255,0.2)" : "rgba(176,139,125,0.12)",
                 }}
@@ -164,7 +131,7 @@ function PackageCard({ pkg, index }) {
                 </svg>
               </span>
               <span
-                className="text-[13px] font-light transition-colors duration-300"
+                className="text-[13px] font-light transition-colors duration-300 leading-[1.6]"
                 style={{
                   fontFamily: "'Jost', sans-serif",
                   color: isActive ? "rgba(255,255,255,0.85)" : "#7a5e57",
@@ -176,9 +143,9 @@ function PackageCard({ pkg, index }) {
           ))}
         </ul>
 
-        {/* CTA */}
+        {/* CTA WhatsApp */}
         <a
-          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(pkg.message)}`}
+          href={buildWhatsappLink(pkg.name)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 w-full py-4 text-[11px] tracking-[0.22em] uppercase font-medium rounded-xs transition-all duration-300"
@@ -194,9 +161,34 @@ function PackageCard({ pkg, index }) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
           </svg>
-          {pkg.cta}
+          {cta}
         </a>
       </div>
+    </div>
+  );
+}
+
+// ─── Skeleton de loading ────────────────────────────────────────────────────
+function PackageSkeleton() {
+  return (
+    <div
+      className="rounded-[3px] p-8 animate-pulse"
+      style={{ background: "#fff", boxShadow: "0 4px 24px rgba(176,139,125,0.10)" }}
+    >
+      <div className="h-4 w-24 mb-6 rounded-full" style={{ background: "#ede0d9" }} />
+      <div className="h-7 w-40 mb-3 rounded" style={{ background: "#ede0d9" }} />
+      <div className="h-px w-full mb-6" style={{ background: "#ede0d9" }} />
+      <div className="space-y-2 mb-7">
+        <div className="h-3 w-full rounded" style={{ background: "#f5ede7" }} />
+        <div className="h-3 w-5/6 rounded" style={{ background: "#f5ede7" }} />
+        <div className="h-3 w-3/4 rounded" style={{ background: "#f5ede7" }} />
+      </div>
+      <div className="space-y-2 mb-8">
+        <div className="h-3 w-full rounded" style={{ background: "#f5ede7" }} />
+        <div className="h-3 w-full rounded" style={{ background: "#f5ede7" }} />
+        <div className="h-3 w-2/3 rounded" style={{ background: "#f5ede7" }} />
+      </div>
+      <div className="h-12 w-full rounded-xs" style={{ background: "#ede0d9" }} />
     </div>
   );
 }
@@ -207,17 +199,54 @@ export default function PackagesSection() {
   const subRef = useRevealDelay(240);
   const noteRef = useRevealDelay(600);
 
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchPublicPackages()
+      .then((data) => {
+        if (cancelled) return;
+        setPackages(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(
+          err?.response?.data?.error ??
+            err?.message ??
+            "Não foi possível carregar os pacotes."
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Em telas grandes, exibir 4 colunas se houver 4 pacotes ou mais.
+  const gridCols =
+    packages.length >= 4
+      ? "md:grid-cols-2 xl:grid-cols-4"
+      : packages.length === 3
+      ? "md:grid-cols-3"
+      : packages.length === 2
+      ? "md:grid-cols-2 max-w-3xl mx-auto"
+      : "max-w-md mx-auto";
+
   return (
     <section
       id="pacotes"
       className="relative overflow-hidden py-28 md:py-40"
       style={{ background: "#fdf8f5" }}
     >
-      {/* Blobs */}
       <div
         className="absolute bottom-0 left-0 w-125 h-125 pointer-events-none"
         style={{
-          background: "radial-gradient(circle at 20% 90%, rgba(176,139,125,0.08) 0%, transparent 65%)",
+          background:
+            "radial-gradient(circle at 20% 90%, rgba(176,139,125,0.08) 0%, transparent 65%)",
         }}
       />
 
@@ -230,7 +259,7 @@ export default function PackagesSection() {
               className="text-[10px] tracking-[0.38em] uppercase font-medium"
               style={{ color: "#B08B7D", fontFamily: "'Jost', sans-serif" }}
             >
-              Pacotes & Investimento
+              Nossos Pacotes
             </span>
             <span className="w-8 h-px" style={{ background: "#B08B7D" }} />
           </div>
@@ -249,16 +278,63 @@ export default function PackagesSection() {
             className="text-[15px] leading-[1.85] font-light max-w-lg mx-auto"
             style={{ color: "#7a5e57", fontFamily: "'Jost', sans-serif" }}
           >
-            Investimento transparente, sem surpresas. Escolha o pacote ideal e comece a transformar sua presença digital hoje.
+            Escolha o pacote ideal para a sua marca e comece a transformar sua presença digital.
+            Fale com a Laura no WhatsApp para combinar os detalhes do seu plano.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-5 items-start">
-          {packages.map((pkg, i) => (
-            <PackageCard key={pkg.name} pkg={pkg} index={i} />
-          ))}
-        </div>
+        {error ? (
+          <div className="text-center py-16">
+            <p
+              className="text-[14px] mb-4"
+              style={{ color: "#9a7d76", fontFamily: "'Jost', sans-serif" }}
+            >
+              {error}
+            </p>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                "Olá, Laura! Gostaria de saber mais sobre os pacotes."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xs text-[12px] tracking-[0.22em] uppercase font-medium"
+              style={{ background: "#B08B7D", color: "#fff", fontFamily: "'Jost', sans-serif" }}
+            >
+              Falar com a Laura
+            </a>
+          </div>
+        ) : loading ? (
+          <div className={`grid gap-5 items-start ${gridCols || "md:grid-cols-3"}`}>
+            {[0, 1, 2].map((i) => <PackageSkeleton key={i} />)}
+          </div>
+        ) : packages.length === 0 ? (
+          <div className="text-center py-16">
+            <p
+              className="text-[14px] mb-4"
+              style={{ color: "#9a7d76", fontFamily: "'Jost', sans-serif" }}
+            >
+              Estamos atualizando nossos pacotes. Fale direto com a Laura para uma proposta sob medida.
+            </p>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                "Olá, Laura! Gostaria de saber mais sobre os pacotes."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xs text-[12px] tracking-[0.22em] uppercase font-medium"
+              style={{ background: "#B08B7D", color: "#fff", fontFamily: "'Jost', sans-serif" }}
+            >
+              Falar com a Laura
+            </a>
+          </div>
+        ) : (
+          <div className={`grid gap-5 items-start ${gridCols}`}>
+            {packages.map((pkg, i) => (
+              <PackageCard key={pkg.id ?? pkg.slug} pkg={pkg} index={i} total={packages.length} />
+            ))}
+          </div>
+        )}
 
         {/* Bottom note */}
         <div ref={noteRef} className="text-center mt-14">

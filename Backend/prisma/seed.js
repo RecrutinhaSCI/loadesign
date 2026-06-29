@@ -55,52 +55,84 @@ async function main() {
   });
   console.log("✅ AgencySettings criadas.");
 
-  // ── 3) Services / Pacotes ──────────────────────────────────────────────────
+  // ── 3) Services / Pacotes oficiais Loa Design ──────────────────────────────
+  // Pacotes oficiais conforme briefing da Laura. Upsert força os textos atuais
+  // tanto em create quanto em update — evita drift se o seed rodar de novo.
   const services = [
     {
-      slug: "basico", name: "Pacote Básico", price: 250, featured: false,
-      description: "Para quem está começando a se posicionar nas redes com consistência.",
-      items: ["2 Reels editados por mês", "3 Posts para feed", "Artes 100% personalizadas", "Cronograma de postagens", "Suporte por WhatsApp"],
+      slug: "basico",
+      name: "Pacote Básico",
+      price: 250,
+      featured: false,
+      description:
+        "Indicado para negócios que estão iniciando sua presença digital e precisam de uma comunicação visual organizada e profissional.",
+      items: [
+        "2 vídeos curtos (Reels) com edição simples por mês",
+        "3 posts de imagem para o feed por mês",
+        "Conteúdo adaptado à identidade do seu negócio",
+      ],
     },
     {
-      slug: "intermediario", name: "Pacote Intermediário", price: 450, featured: true,
-      description: "Para marcas que querem crescer no Instagram com presença consistente.",
-      items: ["4 Reels editados por mês", "6 Posts para feed", "8 Stories estratégicos", "Cronograma + roteiros", "Relatório mensal de desempenho"],
+      slug: "intermediario",
+      name: "Pacote Intermediário",
+      price: 450,
+      featured: true,
+      description:
+        "Indicado para negócios que já possuem presença digital e buscam mais consistência, engajamento e profissionalismo nas redes sociais.",
+      items: [
+        "4 vídeos curtos (Reels) com edição simples por mês",
+        "5 posts de feed por mês",
+        "Conteúdo adaptado à identidade do seu negócio",
+      ],
     },
     {
-      slug: "avancado", name: "Pacote Avançado", price: 850, featured: false,
-      description: "Gestão completa de Instagram para marcas que levam o digital a sério.",
-      items: ["6 Reels editados por mês", "10 Posts para feed", "Gestão completa de stories", "Estratégia de conteúdo mensal", "Resposta a comentários e direct", "Reuniões quinzenais de alinhamento"],
+      slug: "avancado",
+      name: "Pacote Avançado",
+      price: 900,
+      featured: false,
+      description:
+        "Indicado para negócios que buscam crescimento, posicionamento e maior impacto no digital.",
+      items: [
+        "6 vídeos curtos (Reels) com edição simples por mês",
+        "10 posts de imagens para o feed por mês",
+        "Conteúdo adaptado à identidade do seu negócio",
+      ],
     },
     {
-      slug: "branding-basico", name: "Branding Básico", price: 1200, featured: false,
-      description: "Posicionamento + identidade visual essencial para marcas iniciantes.",
-      items: ["Brand voice e posicionamento", "Paleta de cores e tipografia", "3 templates de feed", "Mini-manual da marca em PDF"],
-    },
-    {
-      slug: "identidade-visual", name: "Identidade Visual Completa", price: 1800, featured: false,
-      description: "Identidade visual completa: do conceito ao manual de marca.",
-      items: ["Logo principal + variações", "Paleta de cores ampla", "Tipografia e hierarquia", "Manual completo da marca (PDF)", "Mockups de aplicação"],
-    },
-    {
-      slug: "reels-avulso", name: "Pacote de Reels", price: 180, featured: false,
-      description: "Edição profissional de Reels avulsos para datas e campanhas pontuais.",
-      items: ["3 Reels editados", "Legendas com chamada estratégica", "Trilha sonora em tendência", "Entrega em 5 dias úteis"],
+      slug: "premium",
+      name: "Pacote Premium",
+      price: 1100,
+      featured: false,
+      description:
+        "Indicado para negócios que desejam delegar a presença digital a uma equipe especializada, mantendo suas redes sociais ativas, organizadas e com acompanhamento constante.",
+      items: [
+        "6 vídeos curtos (Reels) com edição simples por mês",
+        "10 posts de feed por mês",
+        "5 fotos de stories",
+        "Gestão de rede",
+        "Conteúdo adaptado à identidade do seu negócio",
+      ],
     },
   ];
 
+  // Upsert: sempre força os textos oficiais (tanto create quanto update),
+  // preservando flag `active` para não reativar pacotes desativados no admin.
   for (const s of services) {
+    const itemsJson = JSON.stringify(s.items);
+    const fields = {
+      name: s.name,
+      price: s.price,
+      featured: s.featured,
+      description: s.description,
+      items: itemsJson,
+    };
     await prisma.service.upsert({
       where: { slug: s.slug },
-      update: {},
-      create: {
-        ...s,
-        active: true,
-        items: JSON.stringify(s.items),
-      },
+      update: fields,                       // atualiza textos/preço se já existir
+      create: { ...fields, slug: s.slug, active: true },
     });
   }
-  console.log(`✅ ${services.length} serviços/pacotes cadastrados.`);
+  console.log(`✅ ${services.length} pacotes oficiais sincronizados.`);
 
   // ── 4) Dados de demonstração (somente primeira execução) ───────────────────
   // Em produção, NÃO sobrescreve dados reais já cadastrados.
