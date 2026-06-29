@@ -41,7 +41,7 @@ function PackageCard({ pkg, index, total }) {
   const isActive = pkg.featured || hovered;
   // tag visual derivada do `featured` da API
   const tag = pkg.featured ? "Mais popular" : `Pacote ${index + 1} de ${total}`;
-  const cta = pkg.featured ? "Quero este pacote" : "Falar com a Laura";
+  const cta = pkg.featured ? "Quero este pacote" : "Solicitar proposta";
 
   return (
     <div
@@ -301,7 +301,7 @@ export default function PackagesSection() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xs text-[12px] tracking-[0.22em] uppercase font-medium"
               style={{ background: "#B08B7D", color: "#fff", fontFamily: "'Jost', sans-serif" }}
             >
-              Quero saber mais
+              Solicitar proposta
             </a>
           </div>
         ) : loading ? (
@@ -325,7 +325,7 @@ export default function PackagesSection() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xs text-[12px] tracking-[0.22em] uppercase font-medium"
               style={{ background: "#B08B7D", color: "#fff", fontFamily: "'Jost', sans-serif" }}
             >
-              Montar minha proposta
+              Solicitar proposta
             </a>
           </div>
         ) : (
