@@ -102,7 +102,7 @@ function StyledSelect({ name, value, onChange, hasError }) {
       <option value="Pacote Básico">Pacote Básico</option>
       <option value="Pacote Intermediário">Pacote Intermediário</option>
       <option value="Pacote Avançado">Pacote Avançado</option>
-      <option value="Identidade Visual">Identidade Visual & Branding</option>
+      <option value="Pacote Premium">Pacote Premium</option>
       <option value="Projeto Avulso">Projeto Avulso</option>
       <option value="Não sei ainda">Não sei ainda — quero orientação</option>
     </select>
