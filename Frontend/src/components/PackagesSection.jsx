@@ -301,7 +301,7 @@ export default function PackagesSection() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xs text-[12px] tracking-[0.22em] uppercase font-medium"
               style={{ background: "#B08B7D", color: "#fff", fontFamily: "'Jost', sans-serif" }}
             >
-              Falar com a Laura
+              Quero saber mais
             </a>
           </div>
         ) : loading ? (
@@ -325,7 +325,7 @@ export default function PackagesSection() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xs text-[12px] tracking-[0.22em] uppercase font-medium"
               style={{ background: "#B08B7D", color: "#fff", fontFamily: "'Jost', sans-serif" }}
             >
-              Falar com a Laura
+              Montar minha proposta
             </a>
           </div>
         ) : (
