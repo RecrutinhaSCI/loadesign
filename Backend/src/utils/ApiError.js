@@ -35,6 +35,10 @@ class ApiError extends Error {
     return new ApiError(404, message);
   }
 
+  static conflict(message = "Conflito com o estado atual do registro", details = null) {
+    return new ApiError(409, message, details);
+  }
+
   static unprocessable(message = "Dados inválidos", details = null) {
     return new ApiError(422, message, details);
   }
