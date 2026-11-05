@@ -15,11 +15,16 @@ import { cn } from '@/lib/utils'
 // ─────────────────────────────────────────────────────────────────────────────
 const ROUTE_LABELS: Record<string, string> = {
   '/dashboard': 'Visão geral',
+  '/contacts':  'Contatos',
+  '/proposals': 'Orçamentos',
+  '/agenda':    'Agenda',
+  '/finance/transactions': 'Lançamentos',
+  '/legacy/projects': 'Projetos (legado)',
+  '/legacy/quotes':   'Orçamentos (legado)',
   '/leads':     'Leads · CRM',
   '/projects':  'Projetos',
   '/clients':   'Clientes',
   '/services':  'Serviços & Pacotes',
-  '/quotes':    'Orçamentos',
   '/finance':   'Financeiro',
   '/settings':  'Configurações',
 }

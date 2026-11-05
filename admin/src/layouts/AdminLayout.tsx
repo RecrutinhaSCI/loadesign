@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Sidebar } from '@/components/layouts/Sidebar'
 import { Topbar } from '@/components/layouts/Topbar'
 import { ToastContainer } from '@/components/ui/ToastContainer'
+import { DetailHost } from '@/components/commercial/DetailHost'
 import { useUIStore } from '@/store/ui.store'
 import { useLeadsStore } from '@/store/leads.store'
 import { useClientsStore } from '@/store/clients.store'
@@ -69,6 +70,7 @@ export function AdminLayout() {
       </div>
 
       <ToastContainer />
+      <DetailHost />
     </div>
   )
 }

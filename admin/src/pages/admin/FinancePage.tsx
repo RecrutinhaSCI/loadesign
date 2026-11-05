@@ -36,8 +36,8 @@ export function FinancePage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        title="Financeiro"
-        description="Receitas, despesas e saúde financeira da agência"
+        title="Lançamentos (caixa)"
+        description="Entradas e saídas registradas. Recebimentos confirmados em Contas a receber entram aqui automaticamente."
         actions={
           <Button variant="primary" size="sm" leftIcon={<Plus size={13} />} onClick={handleNew}>
             Nova transação
@@ -46,7 +46,7 @@ export function FinancePage() {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <StatCard title="Receita total"   value={formatCurrency(totalIncome)}  icon={TrendingUp}   variant="primary" delay={0}    trend={{ value: 16.7, label: 'vs mês ant.' }} />
+        <StatCard title="Receita total"   value={formatCurrency(totalIncome)}  icon={TrendingUp}   variant="primary" delay={0}   />
         <StatCard title="Despesas totais"  value={formatCurrency(totalExpense)} icon={TrendingDown} delay={0.05} />
         <StatCard title="Saldo atual"      value={formatCurrency(balance)}      icon={DollarSign}   delay={0.10} />
       </div>

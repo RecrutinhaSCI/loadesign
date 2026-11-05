@@ -47,7 +47,7 @@ export function ClientsPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Clientes"
+        title="Clientes (legado)"
         description="Base de clientes ativos da Loa Design"
         actions={
           <Button variant="primary" size="sm" leftIcon={<Plus size={13} />} onClick={handleNew}>
