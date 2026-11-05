@@ -1,13 +1,55 @@
-// prisma/seed.js
+// prisma/seed.demo.js
 // ─────────────────────────────────────────────────────────────────────────────
-// Seed inicial — popula o banco com:
-//  - admin user (email: admin@loadesign.com / senha: admin123)
-//  - AgencySettings (singleton com dados reais da Loa)
-//  - Leads/Clients/Projects/Services/Quotes/Transactions realistas
-//  - Testimonials e PortfolioItems iniciais
+// SEED DE DEMONSTRAÇÃO — DESTRUTIVO — SOMENTE BANCO LOCAL DESCARTÁVEL
 //
-// Idempotente: roda quantas vezes quiser, faz upsert.
+// Popula um banco local com dados FICTÍCIOS (clientes, leads, projetos,
+// orçamentos, transações, depoimentos, portfólio).
+// Pode APAGAR dados (deleteMany) quando o banco está vazio de clientes ou com
+// SEED_RESET=true.
+//
+// Não está ligado a nenhum script npm nem ao "prisma db seed" — de propósito.
+// Execução manual, consciente:
+//
+//   DEMO_SEED_CONFIRM_DB=<nome_do_banco_local> \
+//   DEMO_ADMIN_PASSWORD=<senha_local_de_teste> \
+//   node prisma/seed.demo.js
+//
+// Travas:
+//   1) DATABASE_URL precisa ser local/aprovada (guard, sempre aplicado).
+//   2) DEMO_SEED_CONFIRM_DB precisa ser igual ao nome do banco da DATABASE_URL.
+//   3) Senha do admin de demo vem de DEMO_ADMIN_PASSWORD (sem senha fixa) e
+//      nunca é impressa. Admin existente NÃO tem a senha redefinida.
+//   4) Pacotes e AgencySettings só são criados se não existirem (sem update).
 // ─────────────────────────────────────────────────────────────────────────────
+
+require("dotenv").config();
+const { assertSafeDatabaseEnv, parseDatabaseTarget } = require("../src/config/dbGuard");
+
+function fail(msg) {
+  console.error(`[SEED DEMO] ${msg}`);
+  process.exit(1);
+}
+
+try {
+  assertSafeDatabaseEnv(process.env, { alwaysEnforce: true });
+} catch (err) {
+  fail(err.message);
+}
+
+const target = parseDatabaseTarget(process.env.DATABASE_URL);
+const confirmDb = String(process.env.DEMO_SEED_CONFIRM_DB || "").trim();
+if (!target || !target.database || confirmDb !== target.database) {
+  fail(
+    "Confirmação ausente. Defina DEMO_SEED_CONFIRM_DB com o nome exato do banco " +
+    "local de destino para autorizar este seed destrutivo."
+  );
+}
+
+const DEMO_ADMIN_EMAIL = String(process.env.DEMO_ADMIN_EMAIL || "admin@demo.local").trim().toLowerCase();
+const DEMO_ADMIN_PASSWORD = process.env.DEMO_ADMIN_PASSWORD || "";
+if (DEMO_ADMIN_PASSWORD.length < 8) {
+  fail("Defina DEMO_ADMIN_PASSWORD (mínimo 8 caracteres) para o admin de demonstração.");
+}
 
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
@@ -18,25 +60,24 @@ const daysAgo = (n) => new Date(Date.now() - n * 24 * 60 * 60 * 1000);
 const daysFromNow = (n) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
 
 async function main() {
-  console.log("🌱 Iniciando seed da Loa Design...");
+  console.log(`🌱 Seed de DEMONSTRAÇÃO em ${target.description}...`);
 
-  // ── 1) Admin user ──────────────────────────────────────────────────────────
-  const adminEmail = "admin@loadesign.com";
-  const adminPlain = "admin123";
-  const passwordHash = await bcrypt.hash(adminPlain, 10);
-
-  await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: { password: passwordHash, name: "Loa", role: "ADMIN", active: true },
-    create: {
-      name: "Loa",
-      email: adminEmail,
-      password: passwordHash,
-      role: "ADMIN",
-      active: true,
-    },
-  });
-  console.log(`✅ Admin: ${adminEmail} / ${adminPlain}  (TROQUE EM PRODUÇÃO!)`);
+  // ── 1) Admin de demo (somente cria; nunca redefine senha existente) ─────────
+  const existingAdmin = await prisma.user.findUnique({ where: { email: DEMO_ADMIN_EMAIL } });
+  if (existingAdmin) {
+    console.log(`ℹ️  Admin ${DEMO_ADMIN_EMAIL} já existe — mantido sem alterações.`);
+  } else {
+    await prisma.user.create({
+      data: {
+        name: "Loa (demo)",
+        email: DEMO_ADMIN_EMAIL,
+        password: await bcrypt.hash(DEMO_ADMIN_PASSWORD, 10),
+        role: "ADMIN",
+        active: true,
+      },
+    });
+    console.log(`✅ Admin de demo criado: ${DEMO_ADMIN_EMAIL} (senha definida via DEMO_ADMIN_PASSWORD).`);
+  }
 
   // ── 2) AgencySettings (singleton) ──────────────────────────────────────────
   await prisma.agencySettings.upsert({
@@ -56,8 +97,8 @@ async function main() {
   console.log("✅ AgencySettings criadas.");
 
   // ── 3) Services / Pacotes oficiais Loa Design ──────────────────────────────
-  // Pacotes oficiais conforme briefing da Laura. Upsert força os textos atuais
-  // tanto em create quanto em update — evita drift se o seed rodar de novo.
+  // Pacotes de referência. Só são CRIADOS se o slug não existir —
+  // nunca sobrescreve preço/texto de pacotes já cadastrados.
   const services = [
     {
       slug: "basico",
@@ -115,8 +156,7 @@ async function main() {
     },
   ];
 
-  // Upsert: sempre força os textos oficiais (tanto create quanto update),
-  // preservando flag `active` para não reativar pacotes desativados no admin.
+  // Create-only: `update: {}` garante que pacotes existentes não são alterados.
   for (const s of services) {
     const itemsJson = JSON.stringify(s.items);
     const fields = {
@@ -128,21 +168,21 @@ async function main() {
     };
     await prisma.service.upsert({
       where: { slug: s.slug },
-      update: fields,                       // atualiza textos/preço se já existir
+      update: {},                           // nunca altera pacote existente
       create: { ...fields, slug: s.slug, active: true },
     });
   }
-  console.log(`✅ ${services.length} pacotes oficiais sincronizados.`);
+  console.log(`✅ ${services.length} pacotes verificados (criados apenas se ausentes).`);
 
   // ── 4) Dados de demonstração (somente primeira execução) ───────────────────
-  // Em produção, NÃO sobrescreve dados reais já cadastrados.
-  // Para forçar reset completo: SEED_RESET=true npm run db:seed
+  // Banco local descartável apenas (ver travas no topo do arquivo).
+  // Para forçar reset completo: SEED_RESET=true node prisma/seed.demo.js
   const existingClients = await prisma.client.count();
   const force = process.env.SEED_RESET === "true";
 
   if (existingClients > 0 && !force) {
     console.log(`ℹ️  Banco já tem ${existingClients} cliente(s). Pulando seed de demo.`);
-    console.log("   Use SEED_RESET=true npm run db:seed para forçar reset.");
+    console.log("   Use SEED_RESET=true node prisma/seed.demo.js para forçar reset.");
     console.log("\n🎉 Seed concluído (apenas admin + settings + services).");
     return;
   }
@@ -306,7 +346,7 @@ async function main() {
   console.log("✅ 3 itens de portfólio cadastrados.");
 
   console.log("\n🎉 Seed concluído com sucesso!");
-  console.log(`👉 Login admin: ${adminEmail} / ${adminPlain}`);
+  console.log(`👉 Login admin de demo: ${DEMO_ADMIN_EMAIL} (senha não exibida).`);
 }
 
 main()

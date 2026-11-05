@@ -9,7 +9,8 @@ const env = require("./env");
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    log: env.isDev ? ["query", "warn", "error"] : ["warn", "error"],
+    // Em testes, os erros esperados (404/409) já são verificados nas asserções.
+    log: env.isDev ? ["query", "warn", "error"] : env.NODE_ENV === "test" ? [] : ["warn", "error"],
   });
 };
 

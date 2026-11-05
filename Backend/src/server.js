@@ -73,15 +73,18 @@ async function bootstrap() {
 }
 
 // ── Graceful shutdown ─────────────────────────────────────────────────────────
-process.on("SIGINT",  shutdown);
-process.on("SIGTERM", shutdown);
-
 async function shutdown() {
   logger.info("🛑 Encerrando servidor...");
   await prisma.$disconnect();
   process.exit(0);
 }
 
-bootstrap();
+// Só abre a porta quando executado diretamente (`node src/server.js`).
+// Quando importado pelos testes (supertest), apenas exporta o app.
+if (require.main === module) {
+  process.on("SIGINT",  shutdown);
+  process.on("SIGTERM", shutdown);
+  bootstrap();
+}
 
-module.exports = app; // exportado para testes futuros
+module.exports = app;

@@ -21,6 +21,12 @@ function optional(key, fallback = undefined) {
 const NODE_ENV = optional("NODE_ENV", "development");
 const isProd = NODE_ENV === "production";
 
+// ── Guard de banco (somente fora de produção) ───────────────────────────────
+// Recusa DATABASE_URL apontando para hosts que não sejam locais/aprovados.
+// Roda aqui porque env.js é carregado antes do PrismaClient (config/prisma.js).
+// Em produção não faz nada — comportamento do deploy inalterado.
+require("./dbGuard").assertSafeDatabaseEnv(process.env);
+
 // CORS_ORIGIN aceita múltiplas origens separadas por vírgula:
 // CORS_ORIGIN="http://localhost:5173,http://localhost:5174,https://loa.app"
 const corsRaw = optional("CORS_ORIGIN", "http://localhost:5173,http://localhost:5174");
