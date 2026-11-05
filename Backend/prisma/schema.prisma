@@ -226,3 +226,263 @@ model ContactMessage {
 
   @@map("contact_messages")
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// FLUXO COMERCIAL INTEGRADO 2.0
+// Contatos → Orçamentos → Aprovação → Projetos → Financeiro → Agenda
+//
+// Tabelas novas e aditivas: os modelos legados acima (Lead, Client, Quote,
+// Project, Transaction) permanecem intactos. Valores monetários em
+// Decimal(12,2); datas de calendário (vencimentos, prazos) em DATE.
+// ═════════════════════════════════════════════════════════════════════════════
+
+enum ContactType {
+  CLIENT
+  PROSPECT
+}
+
+enum ProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum WorkProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  REVIEW
+  DONE
+  CANCELLED
+}
+
+enum PaymentMode {
+  ONE_TIME
+  INSTALLMENTS
+  RECURRING
+}
+
+enum ReceivableKind {
+  ONE_TIME
+  INSTALLMENT
+  RECURRING
+}
+
+enum ReceivableStatus {
+  PENDING
+  RECEIVED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  PIX
+  CARD
+  BOLETO
+  CASH
+  OTHER
+}
+
+enum RecurringStatus {
+  ACTIVE
+  PAUSED
+  ENDED
+}
+
+enum CalendarEventType {
+  MEETING
+  DELIVERY
+  DEADLINE
+  OTHER
+}
+
+enum CalendarEventStatus {
+  SCHEDULED
+  DONE
+  CANCELLED
+}
+
+// ─── Contact (cliente ou prospect, cadastro único) ───────────────────────────
+model Contact {
+  id              String      @id @default(cuid())
+  name            String
+  phone           String
+  phoneNormalized String
+  email           String?
+  emailNormalized String?
+  type            ContactType @default(PROSPECT)
+  source          String?
+  notes           String?
+  convertedAt     DateTime?
+  archivedAt      DateTime?
+  // Reconciliação com cadastros legados (sem FK: tabelas legadas intactas)
+  legacyLeadId    String?     @unique
+  legacyClientId  String?     @unique
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  proposals   Proposal[]
+  projects    WorkProject[]
+  receivables Receivable[]
+  recurring   RecurringAgreement[]
+  events      CalendarEvent[]
+
+  @@index([phoneNormalized])
+  @@index([emailNormalized])
+  @@index([type, archivedAt])
+  // "contacts" já foi usado por uma versão antiga do schema (migrations SQLite);
+  // nome exclusivo evita colisão com uma eventual tabela remanescente no Neon.
+  @@map("commercial_contacts")
+}
+
+// ─── Proposal (orçamento do fluxo novo) ──────────────────────────────────────
+model Proposal {
+  id              String         @id @default(cuid())
+  contactId       String
+  contact         Contact        @relation(fields: [contactId], references: [id])
+  // Fotografia dos dados do contato no momento do orçamento
+  contactName     String
+  contactPhone    String
+  title           String
+  description     String?
+  serviceId       String?
+  serviceName     String?
+  estimatedValue  Decimal?       @db.Decimal(12, 2)
+  status          ProposalStatus @default(PENDING)
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  cancelledAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  project WorkProject?
+
+  @@index([status, createdAt])
+  @@index([contactId])
+  @@map("proposals")
+}
+
+// ─── WorkProject (projeto oficializado a partir de um orçamento aprovado) ────
+model WorkProject {
+  id              String            @id @default(cuid())
+  contactId       String
+  contact         Contact           @relation(fields: [contactId], references: [id])
+  proposalId      String?           @unique // 1 orçamento gera no máximo 1 projeto
+  proposal        Proposal?         @relation(fields: [proposalId], references: [id])
+  name            String
+  description     String?
+  serviceId       String?
+  serviceName     String
+  contractedValue Decimal           @db.Decimal(12, 2)
+  paymentMode     PaymentMode
+  status          WorkProjectStatus @default(PLANNED)
+  startDate       DateTime?         @db.Date
+  dueDate         DateTime?         @db.Date
+  deliveredAt     DateTime?
+  cancelledAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  receivables Receivable[]
+  recurring   RecurringAgreement?
+  events      CalendarEvent[]
+
+  @@index([status])
+  @@index([contactId])
+  @@map("work_projects")
+}
+
+// ─── RecurringAgreement (mensalidade vinculada ao projeto) ───────────────────
+model RecurringAgreement {
+  id            String          @id @default(cuid())
+  projectId     String          @unique
+  project       WorkProject     @relation(fields: [projectId], references: [id])
+  contactId     String
+  contact       Contact         @relation(fields: [contactId], references: [id])
+  amount        Decimal         @db.Decimal(12, 2)
+  dueDay        Int             // 1 a 31; meses mais curtos usam o último dia
+  startDate     DateTime        @db.Date
+  endDate       DateTime?       @db.Date
+  status        RecurringStatus @default(ACTIVE)
+  paymentMethod PaymentMethod?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  receivables Receivable[]
+
+  @@map("recurring_agreements")
+}
+
+// ─── Receivable (conta a receber) ────────────────────────────────────────────
+model Receivable {
+  id                String              @id @default(cuid())
+  contactId         String
+  contact           Contact             @relation(fields: [contactId], references: [id])
+  projectId         String
+  project           WorkProject         @relation(fields: [projectId], references: [id])
+  recurringId       String?
+  recurring         RecurringAgreement? @relation(fields: [recurringId], references: [id])
+  kind              ReceivableKind
+  installmentNumber Int?                // ONE_TIME = 1; parcelas = 1..N; mensalidade = null
+  installmentCount  Int?
+  competence        String?             // mensalidade: AAAA-MM
+  description       String
+  amount            Decimal             @db.Decimal(12, 2)
+  dueDate           DateTime            @db.Date
+  status            ReceivableStatus    @default(PENDING)
+  paymentMethod     PaymentMethod?
+  receivedAt        DateTime?           @db.Date
+  receivedAmount    Decimal?            @db.Decimal(12, 2)
+  transactionId     String?             @unique // lançamento (legado) gerado na baixa
+  cancelledAt       DateTime?
+  cancelReason      String?
+  notes             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Proteção contra cobranças duplicadas
+  @@unique([projectId, installmentNumber])
+  @@unique([recurringId, competence])
+  @@index([status, dueDate])
+  @@index([contactId])
+  @@map("receivables")
+}
+
+// ─── CalendarEvent (agenda) ──────────────────────────────────────────────────
+model CalendarEvent {
+  id        String              @id @default(cuid())
+  title     String
+  type      CalendarEventType   @default(OTHER)
+  status    CalendarEventStatus @default(SCHEDULED)
+  startsAt  DateTime
+  endsAt    DateTime?
+  allDay    Boolean             @default(false)
+  location  String?
+  notes     String?
+  contactId String?
+  contact   Contact?            @relation(fields: [contactId], references: [id])
+  projectId String?
+  project   WorkProject?        @relation(fields: [projectId], references: [id])
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@index([startsAt])
+  @@index([status])
+  @@map("calendar_events")
+}
+
+// ─── ActivityLog (histórico de alterações relevantes) ────────────────────────
+model ActivityLog {
+  id         String   @id @default(cuid())
+  entityType String   // contact | proposal | project | receivable | recurring | event
+  entityId   String
+  action     String   // created | updated | approved | rejected | reopened | received ...
+  message    String
+  data       Json?
+  userId     String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
