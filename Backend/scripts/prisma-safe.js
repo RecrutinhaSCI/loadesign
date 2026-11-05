@@ -107,6 +107,12 @@ function decide(args, env, { schemaProvider, lockProvider }) {
   }
 
   if (policy === "local") {
+    // Exceção ÚNICA e estreita: `migrate status` remoto, somente quando invocado
+    // pelo fluxo supervisionado (scripts/prod-migrate.js), que já validou
+    // projeto/branch/banco/usuário por consulta somente leitura imediatamente antes.
+    if (key === "migrate status" && env.PRISMA_SAFE_SUPERVISED_STATUS === "1") {
+      return decideSupervisedStatus(args, env, { schemaProvider, lockProvider });
+    }
     try {
       const { target } = assertSafeDatabaseEnv(env, { alwaysEnforce: true });
       return { allowed: true, policy, reason: `Destino local: ${target}` };
@@ -140,6 +146,36 @@ function decide(args, env, { schemaProvider, lockProvider }) {
     };
   }
   return { allowed: true, policy, reason: `Produção confirmada para ${target.description}` };
+}
+
+/**
+ * `migrate status` remoto sob supervisão. Todas as condições são obrigatórias:
+ *  - argumentos exatamente ["migrate", "status"] (nada além);
+ *  - PRISMA_PROD_CONFIRM_HOST igual ao host; PRISMA_SAFE_EXPECTED_DATABASE igual ao banco;
+ *  - endpoint direto (sem "-pooler"); sslmode=require/verify-ca/verify-full;
+ *  - sessão forçada somente leitura: options contém default_transaction_read_only=on
+ *    (o PostgreSQL recusa qualquer DDL/DML nessa sessão);
+ *  - migration_lock.toml com o mesmo provider do schema.
+ */
+function decideSupervisedStatus(args, env, { schemaProvider, lockProvider }) {
+  const policy = "supervised-readonly";
+  const no = (reason) => ({ allowed: false, policy, reason });
+  if (args.length !== 2 || args[0] !== "migrate" || args[1] !== "status") return no("status supervisionado não aceita argumentos adicionais.");
+  let url;
+  try { url = new URL(String(env.DATABASE_URL || "")); } catch { return no("DATABASE_URL ausente ou inválida."); }
+  const target = parseDatabaseTarget(env.DATABASE_URL);
+  if (!target || !target.host) return no("DATABASE_URL ausente ou inválida.");
+  const confirm = String(env.PRISMA_PROD_CONFIRM_HOST || "").trim().toLowerCase();
+  if (!confirm || confirm !== target.host) return no(`PRISMA_PROD_CONFIRM_HOST precisa ser igual ao host (${target.host}).`);
+  const expectedDb = String(env.PRISMA_SAFE_EXPECTED_DATABASE || "").trim();
+  if (!expectedDb || expectedDb !== target.database) return no("PRISMA_SAFE_EXPECTED_DATABASE ausente ou diferente do banco da URL.");
+  if (/-pooler\b/.test(target.host)) return no("endpoint pooler não é permitido.");
+  const local = ["localhost", "127.0.0.1", "::1"].includes(target.host);
+  if (!local && !["require", "verify-ca", "verify-full"].includes(url.searchParams.get("sslmode"))) return no("SSL obrigatório (sslmode=require).");
+  const options = String(url.searchParams.get("options") || "").replace(/\s+/g, " ");
+  if (!/(^|\s)-c default_transaction_read_only=on(\s|$)/.test(options)) return no("sessão precisa ser somente leitura (options=-c default_transaction_read_only=on).");
+  if (!schemaProvider || !lockProvider || schemaProvider !== lockProvider) return no("migration_lock.toml incompatível com o schema.");
+  return { allowed: true, policy, reason: `Status somente leitura supervisionado: ${target.description}` };
 }
 
 function resolvePrismaCli() {

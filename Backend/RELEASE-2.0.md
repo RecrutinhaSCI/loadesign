@@ -42,7 +42,7 @@
    - hashes md5 por tabela calculados **no mesmo snapshot**;
    - SHA-256 do arquivo, `pg_restore --list` validado (11 TABLE + 11 TABLE DATA);
    - saída em `Backend/backups/` (ignorado pelo Git). Nada é sobrescrito.
-   - Se o `loa_inspector` falhar, o script para. Nunca usar outra credencial.
+   - Se a credencial somente leitura falhar, o script para. Nunca usar outra credencial.
 3. **Restauração verificada**: `node scripts/prod-backup.js restore --execute`
    - confere o SHA-256; cria o banco local NOVO `loadesign_restore_check`
      (recusa se existir); `pg_restore --single-transaction --exit-on-error`
@@ -81,16 +81,31 @@ Commit na branch `feat/loa-fluxo-comercial-integrado`, push e Pull Request para
 
 ## Fase D — Migração do Neon (aditiva, ~segundos)
 
-```bash
-# sessão de terminal com DATABASE_URL do Neon apenas nesta sessão
-PRISMA_PROD_CONFIRM_HOST="<host do Neon>" node scripts/prisma-safe.js migrate resolve --applied 0_baseline
-PRISMA_PROD_CONFIRM_HOST="<host do Neon>" node scripts/prisma-safe.js migrate deploy
-PRISMA_PROD_CONFIRM_HOST="<host do Neon>" node scripts/prisma-safe.js migrate status
+Executada com `scripts/prod-migrate.js` (envolve o `prisma-safe` e para sozinho
+em qualquer condição inesperada). Credencial em `Backend/.env.migrate`
+(ignorado pelo Git), preenchida pela responsável técnica só para a sessão:
+
+```
+MIGRATE_DATABASE_URL=   # role dona do schema, endpoint DIRETO (sem "-pooler"), sslmode=require
+MIGRATE_CONFIRM_HOST=   # host exato do endpoint direto
+MIGRATE_EXPECTED_BRANCH=# ID do branch production
 ```
 
-Depois: repetir a inspeção (Fase A.4) — as tabelas legadas devem ter as
-mesmas contagens e as 7 tabelas novas devem existir vazias.
-O backend antigo continua funcionando (ele ignora as tabelas novas).
+| Passo | Comando | Escreve? | Aprovação |
+|---|---|---|---|
+| D1.0 | `node scripts/prod-migrate.js check` | não | identidade, branch, CREATE, catálogo COMPATÍVEL, `_prisma_migrations` inexistente, legado = backup |
+| D1.1 | `node scripts/prod-migrate.js resolve-baseline --execute` | só `_prisma_migrations` | 1 registro `0_baseline` concluído; legado = backup |
+| D1.2 | `node scripts/prod-migrate.js deploy --execute` | tabelas/tipos novos | 2 migrations concluídas; 7 tabelas + 10 tipos novos vazios; legado = backup; status "up to date" |
+| D1.3 | `node scripts/prod-migrate.js verify` | não | repete as verificações |
+
+Erro em D1.2: a migração é transacional (nada aplicado), mas o Prisma registra
+a tentativa. **Não repetir.** Rodar `verify`, analisar e, com autorização,
+`migrate resolve --rolled-back 20261105120000_fluxo_comercial_2_0`.
+
+O backend antigo continua funcionando após a migração (verificado na Fase C1).
+Ao final: esvaziar/remover a credencial `.env.migrate`. Rotacionar a senha da
+role dona do schema **somente** em conjunto com a atualização do `DATABASE_URL`
+do backend em produção (senão a API perde o acesso ao banco).
 
 ## Fase E — Publicação
 

@@ -49,3 +49,7 @@ neon-catalog*.json
 
 # backups locais de produção (nunca versionar)
 Backend/backups/
+
+# credencial da sessão de migração (nunca versionar)
+.env.migrate
+*/.env.migrate

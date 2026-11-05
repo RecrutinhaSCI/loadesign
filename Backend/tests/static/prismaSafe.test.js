@@ -75,6 +75,56 @@ test("migrate deploy/resolve exigem confirmação explícita do host", () => {
   }
 });
 
+// ─── migrate status supervisionado (fluxo prod-migrate.js) ──────────────────
+const RO_URL = "postgresql://u:p@ep-x.aws.neon.tech/neondb?sslmode=require&options=-c%20default_transaction_read_only%3Don";
+const SUP = {
+  DATABASE_URL: RO_URL, NODE_ENV: "production", PRISMA_SAFE_SUPERVISED_STATUS: "1",
+  PRISMA_PROD_CONFIRM_HOST: "ep-x.aws.neon.tech", PRISMA_SAFE_EXPECTED_DATABASE: "neondb",
+};
+const withUrl = (patch) => { const u = new URL(RO_URL); for (const [k, v] of Object.entries(patch)) v === null ? u.searchParams.delete(k) : u.searchParams.set(k, v); return u.toString(); };
+
+test("status remoto supervisionado: permitido só com todas as condições", () => {
+  const d = decide(["migrate", "status"], SUP, MATCH);
+  assert.equal(d.allowed, true, d.reason);
+  assert.equal(d.policy, "supervised-readonly");
+});
+
+test("status remoto: bloqueado por padrão e em cada condição ausente", () => {
+  const cases = {
+    "sem marcador supervisionado": { ...SUP, PRISMA_SAFE_SUPERVISED_STATUS: "" },
+    "host não confirmado": { ...SUP, PRISMA_PROD_CONFIRM_HOST: "" },
+    "host diferente": { ...SUP, PRISMA_PROD_CONFIRM_HOST: "outro.neon.tech" },
+    "banco diferente": { ...SUP, PRISMA_SAFE_EXPECTED_DATABASE: "outro" },
+    "banco não informado": { ...SUP, PRISMA_SAFE_EXPECTED_DATABASE: "" },
+    "pooler": { ...SUP, DATABASE_URL: RO_URL.replace("ep-x.aws", "ep-x-pooler.aws"), PRISMA_PROD_CONFIRM_HOST: "ep-x-pooler.aws.neon.tech" },
+    "sem SSL": { ...SUP, DATABASE_URL: withUrl({ sslmode: null }) },
+    "SSL desabilitado": { ...SUP, DATABASE_URL: withUrl({ sslmode: "disable" }) },
+    "sem sessão somente leitura": { ...SUP, DATABASE_URL: withUrl({ options: null }) },
+    "read_only=off": { ...SUP, DATABASE_URL: withUrl({ options: "-c default_transaction_read_only=off" }) },
+  };
+  for (const [name, env] of Object.entries(cases)) {
+    assert.equal(decide(["migrate", "status"], env, MATCH).allowed, false, name);
+  }
+  assert.equal(decide(["migrate", "status"], SUP, MISMATCH).allowed, false, "lock incompatível");
+  assert.equal(decide(["migrate", "status", "--schema", "x"], SUP, MATCH).allowed, false, "argumentos extras");
+});
+
+test("marcador supervisionado não amplia nenhum outro comando", () => {
+  for (const c of [["migrate", "dev"], ["migrate", "reset", "--force"], ["db", "push"], ["db", "execute"], ["db", "pull"], ["migrate", "diff"], ["studio"]]) {
+    assert.equal(decide(c, SUP, MATCH).allowed, false, c.join(" "));
+  }
+  // deploy/resolve seguem exigindo apenas a política de produção (inalterada).
+  const noConfirm = { ...SUP, PRISMA_PROD_CONFIRM_HOST: "" };
+  assert.equal(decide(["migrate", "deploy"], noConfirm, MATCH).allowed, false);
+  assert.equal(decide(["migrate", "deploy"], SUP, MATCH).policy, "production");
+});
+
+test("status local continua pela política local", () => {
+  const d = decide(["migrate", "status"], LOCAL, MATCH);
+  assert.equal(d.allowed, true);
+  assert.equal(d.policy, "local");
+});
+
 test("estado atual do repositório: lock SQLite × schema PostgreSQL detectado", () => {
   const p = readProviders();
   assert.equal(p.schemaProvider, "postgresql");
