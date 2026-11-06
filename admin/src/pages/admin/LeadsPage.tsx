@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Download, Plus } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
 import { LeadsTable } from '@/components/admin/LeadsTable'
@@ -11,7 +11,9 @@ import type { Lead } from '@/types'
 export function LeadsPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Lead | null>(null)
-  const { items: leads } = useLeadsStore()
+  const { items: leads, refresh } = useLeadsStore()
+  // Leads chegam pelo formulário do site a qualquer momento: recarrega ao abrir.
+  useEffect(() => { void refresh() }, [refresh])
   const toast = useToastStore()
 
   const handleNew = () => { setEditing(null); setFormOpen(true) }
