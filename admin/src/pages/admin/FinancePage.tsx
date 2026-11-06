@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, DollarSign, TrendingUp, TrendingDown, ArrowUpRight, Pencil, Trash2 } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
@@ -9,6 +9,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { TransactionModal } from '@/components/admin/TransactionModal'
 import { useTransactionsStore } from '@/store/transactions.store'
 import { useToastStore } from '@/store/toast.store'
+import { useCommercialSync } from '@/store/commercialSync.store'
 import { formatCurrency, formatDate, cn } from '@/lib/utils'
 import type { Transaction } from '@/types'
 
@@ -16,8 +17,14 @@ export function FinancePage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
 
-  const { items: transactions, remove } = useTransactionsStore()
+  const { items: transactions, remove, refresh } = useTransactionsStore()
   const toast = useToastStore()
+
+  // Recebimentos e estornos em "Contas a receber" criam/removem lançamentos no
+  // servidor: recarrega ao abrir a tela e após qualquer ação do fluxo comercial
+  // (antes a lista ficava com o cache do primeiro carregamento).
+  const syncVersion = useCommercialSync((s) => s.version)
+  useEffect(() => { void refresh() }, [refresh, syncVersion])
 
   const totalIncome  = transactions.filter((t) => t.type === 'income').reduce((s, t) => s + t.value, 0)
   const totalExpense = transactions.filter((t) => t.type === 'expense').reduce((s, t) => s + t.value, 0)
