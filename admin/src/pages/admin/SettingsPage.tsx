@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Save, Eye, EyeOff, Lock, Undo2, KeyRound } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
@@ -69,12 +69,16 @@ export function SettingsPage() {
 
   // As configurações chegam do servidor depois da primeira renderização:
   // atualiza os rascunhos que ainda não foram editados.
+  // Compara com o ÚLTIMO estado sincronizado (não com o novo), senão um
+  // rascunho ainda intocado pareceria "editado" quando o servidor responde.
+  const synced = useRef(fromSettings())
   useEffect(() => {
-    if (!settingsLoaded) return
+    const prev = synced.current
     const next = fromSettings()
-    if (!dirty.profile) setProfileDraft(next.profile)
-    if (!dirty.agency) setAgencyDraft(next.agency)
-    if (!dirty.notifications) setNotifDraft(next.notifications)
+    if (same(profileDraft, prev.profile)) setProfileDraft(next.profile)
+    if (same(agencyDraft, prev.agency)) setAgencyDraft(next.agency)
+    if (same(notifDraft, prev.notifications)) setNotifDraft(next.notifications)
+    synced.current = next
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded, settings])
 
