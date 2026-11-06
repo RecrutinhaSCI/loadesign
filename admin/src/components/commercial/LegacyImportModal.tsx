@@ -31,6 +31,7 @@ export function LegacyImportModal({ open, onClose }: { open: boolean; onClose: (
   // Telefones digitados (chave "lead:<id>" / "client:<id>") e os já aplicados à prévia.
   const [phones, setPhones] = useState<Record<string, string>>({})
   const [applied, setApplied] = useState<Record<string, string>>({})
+  const [lastCreated, setLastCreated] = useState<number | null>(null)
   const { busy, run } = useMutation()
   const toast = useToastStore()
 
@@ -46,7 +47,7 @@ export function LegacyImportModal({ open, onClose }: { open: boolean; onClose: (
       .finally(() => setLoading(false))
   }
   useEffect(() => {
-    if (open) { setPhones({}); setApplied({}); load() }
+    if (open) { setPhones({}); setApplied({}); setLastCreated(null); load() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
@@ -55,7 +56,10 @@ export function LegacyImportModal({ open, onClose }: { open: boolean; onClose: (
       const r = await run(() => contactsApi.legacyApply(applied))
       if (!r) return
       toast.success(`${r.created ?? 0} contato(s) importado(s).`, 'Leads e clientes legados não foram alterados.')
-      setReport(r); setPhones({}); setApplied({})
+      // O relatório da importação descreve o estado ANTES dela: recarrega a
+      // prévia para mostrar o que sobrou (já importados, conflitos, sem telefone).
+      setLastCreated(r.created ?? 0); setPhones({})
+      load({})
     } catch (e) { setError(apiErrorInfo(e).message) }
   }
 
@@ -152,7 +156,7 @@ export function LegacyImportModal({ open, onClose }: { open: boolean; onClose: (
             </Section>
           )}
 
-          {report!.created != null && <p className="text-sm text-emerald-300">{report!.created} contato(s) criado(s) nesta importação.</p>}
+          {lastCreated != null && <p role="status" className="text-sm text-emerald-300">{lastCreated} contato(s) criado(s) nesta importação. A prévia abaixo mostra o que ainda resta.</p>}
         </div>
       )}
     </Modal>
