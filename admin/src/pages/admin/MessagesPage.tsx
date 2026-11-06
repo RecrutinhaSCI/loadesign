@@ -162,7 +162,7 @@ function MessageModal({ message, onClose, onChanged, onRemoved }: {
           <FormError message={error} />
         </div>
       </Modal>
-      <ConfirmDialog open={confirmRemove} danger title="Remover mensagem?" confirmLabel="Remover definitivamente"
+      <ConfirmDialog open={confirmRemove} danger title="Remover mensagem?" confirmLabel="Remover definitivamente" note="Esta ação não pode ser desfeita."
         description="A mensagem será apagada de forma permanente (por exemplo, a pedido do remetente). O lead gerado por ela não é removido."
         onClose={() => setConfirmRemove(false)}
         onConfirm={async () => { await messagesApi.remove(message.id); onRemoved() }} />
