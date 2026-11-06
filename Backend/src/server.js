@@ -15,12 +15,14 @@ const logger       = require("./utils/logger");
 const routes       = require("./routes/index");
 const notFound     = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
+const { trustProxy } = require("./utils/clientIp");
 
 const app = express();
 
-// Atrás do proxy do Render: confia em UM salto para obter o IP real do cliente
-// (X-Forwarded-For), usado pelo limite de tentativas de login.
-app.set("trust proxy", 1);
+// Atrás dos proxies do Render: confia SÓ em saltos de infraestrutura (redes
+// internas e Cloudflare), sem contar saltos e sem confiar no que o cliente
+// envia no X-Forwarded-For. Ver utils/clientIp.js.
+app.set("trust proxy", trustProxy);
 
 // ── Segurança ─────────────────────────────────────────────────────────────────
 app.use(helmet());
