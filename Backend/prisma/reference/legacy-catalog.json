@@ -1,0 +1,1801 @@
+{
+  "schema": "migration_reference",
+  "tables": [
+    "agency_settings",
+    "clients",
+    "contact_messages",
+    "leads",
+    "portfolio_items",
+    "projects",
+    "quotes",
+    "services",
+    "testimonials",
+    "transactions",
+    "users"
+  ],
+  "columns": [
+    {
+      "table_name": "agency_settings",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'singleton'::text"
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "email",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "whatsapp",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "instagram",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "website",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "ownerName",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "ownerEmail",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "notifications",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'{\"newLead\":true,\"statusChange\":true,\"paymentReceived\":true,\"projectDelivered\":true}'::text"
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "agency_settings",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "clients",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "email",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "phone",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "company",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "instagram",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "notes",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "clients",
+      "column_name": "totalProjects",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "clients",
+      "column_name": "totalRevenue",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "clients",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "clients",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "email",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "phone",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "instagram",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "service",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "message",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'NEW'::text"
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "leadId",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "contact_messages",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "email",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "phone",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "company",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "website",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "source",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'other'::text"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'new'::text"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "service",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "score",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": "50"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "value",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "notes",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "tags",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'[]'::text"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "assignedTo",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "lastContactAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "leads",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "leads",
+      "column_name": "clientId",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "title",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "client",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "category",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'social-media'::text"
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "description",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "imageUrl",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "link",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "featured",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "false"
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "order",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "portfolio_items",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'DRAFT'::text"
+    },
+    {
+      "table_name": "projects",
+      "column_name": "progress",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "projects",
+      "column_name": "value",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "projects",
+      "column_name": "deadline",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "description",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "projects",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "clientId",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "projects",
+      "column_name": "clientName",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "clientName",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "clientEmail",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "clientPhone",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'draft'::text"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "items",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'[]'::text"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "discount",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "total",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "notes",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "validUntil",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "quotes",
+      "column_name": "clientId",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "services",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "services",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "services",
+      "column_name": "slug",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "services",
+      "column_name": "description",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "services",
+      "column_name": "price",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "services",
+      "column_name": "featured",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "false"
+    },
+    {
+      "table_name": "services",
+      "column_name": "active",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "true"
+    },
+    {
+      "table_name": "services",
+      "column_name": "items",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'[]'::text"
+    },
+    {
+      "table_name": "services",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "services",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "role",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "avatar",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "text",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "result",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "stars",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": "5"
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "active",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "true"
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "order",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "testimonials",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "description",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "client",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'—'::text"
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "type",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "value",
+      "data_type": "double precision",
+      "udt_name": "float8",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "date",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "category",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'Outros'::text"
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "transactions",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "users",
+      "column_name": "id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "users",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "users",
+      "column_name": "email",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "users",
+      "column_name": "password",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "users",
+      "column_name": "role",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'ADMIN'::text"
+    },
+    {
+      "table_name": "users",
+      "column_name": "active",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "true"
+    },
+    {
+      "table_name": "users",
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "table_name": "users",
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "is_nullable": "NO",
+      "column_default": null
+    }
+  ],
+  "indexes": [
+    {
+      "table_name": "agency_settings",
+      "indexname": "agency_settings_pkey",
+      "indexdef": "CREATE UNIQUE INDEX agency_settings_pkey ON agency_settings USING btree (id)"
+    },
+    {
+      "table_name": "clients",
+      "indexname": "clients_pkey",
+      "indexdef": "CREATE UNIQUE INDEX clients_pkey ON clients USING btree (id)"
+    },
+    {
+      "table_name": "contact_messages",
+      "indexname": "contact_messages_pkey",
+      "indexdef": "CREATE UNIQUE INDEX contact_messages_pkey ON contact_messages USING btree (id)"
+    },
+    {
+      "table_name": "leads",
+      "indexname": "leads_createdAt_idx",
+      "indexdef": "CREATE INDEX \"leads_createdAt_idx\" ON leads USING btree (\"createdAt\")"
+    },
+    {
+      "table_name": "leads",
+      "indexname": "leads_pkey",
+      "indexdef": "CREATE UNIQUE INDEX leads_pkey ON leads USING btree (id)"
+    },
+    {
+      "table_name": "leads",
+      "indexname": "leads_status_idx",
+      "indexdef": "CREATE INDEX leads_status_idx ON leads USING btree (status)"
+    },
+    {
+      "table_name": "portfolio_items",
+      "indexname": "portfolio_items_pkey",
+      "indexdef": "CREATE UNIQUE INDEX portfolio_items_pkey ON portfolio_items USING btree (id)"
+    },
+    {
+      "table_name": "projects",
+      "indexname": "projects_pkey",
+      "indexdef": "CREATE UNIQUE INDEX projects_pkey ON projects USING btree (id)"
+    },
+    {
+      "table_name": "projects",
+      "indexname": "projects_status_idx",
+      "indexdef": "CREATE INDEX projects_status_idx ON projects USING btree (status)"
+    },
+    {
+      "table_name": "quotes",
+      "indexname": "quotes_pkey",
+      "indexdef": "CREATE UNIQUE INDEX quotes_pkey ON quotes USING btree (id)"
+    },
+    {
+      "table_name": "services",
+      "indexname": "services_pkey",
+      "indexdef": "CREATE UNIQUE INDEX services_pkey ON services USING btree (id)"
+    },
+    {
+      "table_name": "services",
+      "indexname": "services_slug_key",
+      "indexdef": "CREATE UNIQUE INDEX services_slug_key ON services USING btree (slug)"
+    },
+    {
+      "table_name": "testimonials",
+      "indexname": "testimonials_pkey",
+      "indexdef": "CREATE UNIQUE INDEX testimonials_pkey ON testimonials USING btree (id)"
+    },
+    {
+      "table_name": "transactions",
+      "indexname": "transactions_date_idx",
+      "indexdef": "CREATE INDEX transactions_date_idx ON transactions USING btree (date)"
+    },
+    {
+      "table_name": "transactions",
+      "indexname": "transactions_pkey",
+      "indexdef": "CREATE UNIQUE INDEX transactions_pkey ON transactions USING btree (id)"
+    },
+    {
+      "table_name": "transactions",
+      "indexname": "transactions_type_idx",
+      "indexdef": "CREATE INDEX transactions_type_idx ON transactions USING btree (type)"
+    },
+    {
+      "table_name": "users",
+      "indexname": "users_email_key",
+      "indexdef": "CREATE UNIQUE INDEX users_email_key ON users USING btree (email)"
+    },
+    {
+      "table_name": "users",
+      "indexname": "users_pkey",
+      "indexdef": "CREATE UNIQUE INDEX users_pkey ON users USING btree (id)"
+    }
+  ],
+  "constraints": [
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_email_not_null",
+      "contype": "n",
+      "def": "NOT NULL email"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_instagram_not_null",
+      "contype": "n",
+      "def": "NOT NULL instagram"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_notifications_not_null",
+      "contype": "n",
+      "def": "NOT NULL notifications"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_ownerEmail_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"ownerEmail\""
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_ownerName_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"ownerName\""
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_website_not_null",
+      "contype": "n",
+      "def": "NOT NULL website"
+    },
+    {
+      "table_name": "agency_settings",
+      "conname": "agency_settings_whatsapp_not_null",
+      "contype": "n",
+      "def": "NOT NULL whatsapp"
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_email_not_null",
+      "contype": "n",
+      "def": "NOT NULL email"
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_phone_not_null",
+      "contype": "n",
+      "def": "NOT NULL phone"
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_totalProjects_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"totalProjects\""
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_totalRevenue_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"totalRevenue\""
+    },
+    {
+      "table_name": "clients",
+      "conname": "clients_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_message_not_null",
+      "contype": "n",
+      "def": "NOT NULL message"
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_phone_not_null",
+      "contype": "n",
+      "def": "NOT NULL phone"
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_status_not_null",
+      "contype": "n",
+      "def": "NOT NULL status"
+    },
+    {
+      "table_name": "contact_messages",
+      "conname": "contact_messages_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_clientId_fkey",
+      "contype": "f",
+      "def": "FOREIGN KEY (\"clientId\") REFERENCES clients(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_email_not_null",
+      "contype": "n",
+      "def": "NOT NULL email"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_score_not_null",
+      "contype": "n",
+      "def": "NOT NULL score"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_service_not_null",
+      "contype": "n",
+      "def": "NOT NULL service"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_source_not_null",
+      "contype": "n",
+      "def": "NOT NULL source"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_status_not_null",
+      "contype": "n",
+      "def": "NOT NULL status"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_tags_not_null",
+      "contype": "n",
+      "def": "NOT NULL tags"
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "leads",
+      "conname": "leads_value_not_null",
+      "contype": "n",
+      "def": "NOT NULL value"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_category_not_null",
+      "contype": "n",
+      "def": "NOT NULL category"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_client_not_null",
+      "contype": "n",
+      "def": "NOT NULL client"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_featured_not_null",
+      "contype": "n",
+      "def": "NOT NULL featured"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_imageUrl_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"imageUrl\""
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_order_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"order\""
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_title_not_null",
+      "contype": "n",
+      "def": "NOT NULL title"
+    },
+    {
+      "table_name": "portfolio_items",
+      "conname": "portfolio_items_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_clientId_fkey",
+      "contype": "f",
+      "def": "FOREIGN KEY (\"clientId\") REFERENCES clients(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_clientName_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"clientName\""
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_deadline_not_null",
+      "contype": "n",
+      "def": "NOT NULL deadline"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_progress_not_null",
+      "contype": "n",
+      "def": "NOT NULL progress"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_status_not_null",
+      "contype": "n",
+      "def": "NOT NULL status"
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "projects",
+      "conname": "projects_value_not_null",
+      "contype": "n",
+      "def": "NOT NULL value"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_clientEmail_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"clientEmail\""
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_clientId_fkey",
+      "contype": "f",
+      "def": "FOREIGN KEY (\"clientId\") REFERENCES clients(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_clientName_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"clientName\""
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_clientPhone_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"clientPhone\""
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_discount_not_null",
+      "contype": "n",
+      "def": "NOT NULL discount"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_items_not_null",
+      "contype": "n",
+      "def": "NOT NULL items"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_status_not_null",
+      "contype": "n",
+      "def": "NOT NULL status"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_total_not_null",
+      "contype": "n",
+      "def": "NOT NULL total"
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "quotes",
+      "conname": "quotes_validUntil_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"validUntil\""
+    },
+    {
+      "table_name": "services",
+      "conname": "services_active_not_null",
+      "contype": "n",
+      "def": "NOT NULL active"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "services",
+      "conname": "services_description_not_null",
+      "contype": "n",
+      "def": "NOT NULL description"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_featured_not_null",
+      "contype": "n",
+      "def": "NOT NULL featured"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_items_not_null",
+      "contype": "n",
+      "def": "NOT NULL items"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_price_not_null",
+      "contype": "n",
+      "def": "NOT NULL price"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_slug_not_null",
+      "contype": "n",
+      "def": "NOT NULL slug"
+    },
+    {
+      "table_name": "services",
+      "conname": "services_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_active_not_null",
+      "contype": "n",
+      "def": "NOT NULL active"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_order_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"order\""
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_role_not_null",
+      "contype": "n",
+      "def": "NOT NULL role"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_stars_not_null",
+      "contype": "n",
+      "def": "NOT NULL stars"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_text_not_null",
+      "contype": "n",
+      "def": "NOT NULL text"
+    },
+    {
+      "table_name": "testimonials",
+      "conname": "testimonials_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_category_not_null",
+      "contype": "n",
+      "def": "NOT NULL category"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_client_not_null",
+      "contype": "n",
+      "def": "NOT NULL client"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_date_not_null",
+      "contype": "n",
+      "def": "NOT NULL date"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_description_not_null",
+      "contype": "n",
+      "def": "NOT NULL description"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_type_not_null",
+      "contype": "n",
+      "def": "NOT NULL type"
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    },
+    {
+      "table_name": "transactions",
+      "conname": "transactions_value_not_null",
+      "contype": "n",
+      "def": "NOT NULL value"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_active_not_null",
+      "contype": "n",
+      "def": "NOT NULL active"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_createdAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"createdAt\""
+    },
+    {
+      "table_name": "users",
+      "conname": "users_email_not_null",
+      "contype": "n",
+      "def": "NOT NULL email"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_id_not_null",
+      "contype": "n",
+      "def": "NOT NULL id"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_name_not_null",
+      "contype": "n",
+      "def": "NOT NULL name"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_password_not_null",
+      "contype": "n",
+      "def": "NOT NULL password"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_pkey",
+      "contype": "p",
+      "def": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_role_not_null",
+      "contype": "n",
+      "def": "NOT NULL role"
+    },
+    {
+      "table_name": "users",
+      "conname": "users_updatedAt_not_null",
+      "contype": "n",
+      "def": "NOT NULL \"updatedAt\""
+    }
+  ],
+  "enums": []
+}

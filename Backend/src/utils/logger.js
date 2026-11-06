@@ -28,6 +28,8 @@ const prodFormat = combine(
 
 const logger = createLogger({
   level: env.isDev ? "debug" : "info",
+  // Testes automatizados: sem ruído no console (erros continuam nas asserções).
+  silent: env.NODE_ENV === "test",
   format: env.isProd ? prodFormat : devFormat,
   transports: [
     new transports.Console(),

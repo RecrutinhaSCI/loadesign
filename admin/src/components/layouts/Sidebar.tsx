@@ -1,8 +1,8 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  LayoutDashboard, Users, UserCheck, Briefcase, Package,
-  FileText, DollarSign, Settings, ChevronLeft,
+  LayoutDashboard, Users, Briefcase, Package,
+  FileText, DollarSign, Settings, ChevronLeft, Contact, CalendarDays,
   X, Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -15,12 +15,16 @@ import type { NavItem } from '@/types'
 // ─────────────────────────────────────────────────────────────────────────────
 const BASE_NAV: NavItem[] = [
   { label: 'Dashboard',  href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Leads',      href: '/leads',     icon: Users },
-  { label: 'Clientes',   href: '/clients',   icon: UserCheck },
+  { label: 'Contatos',   href: '/contacts',  icon: Contact },
+  { label: 'Orçamentos', href: '/proposals', icon: FileText },
   { label: 'Projetos',   href: '/projects',  icon: Briefcase },
-  { label: 'Serviços',   href: '/services',  icon: Package },
-  { label: 'Orçamentos', href: '/quotes',    icon: FileText },
   { label: 'Financeiro', href: '/finance',   icon: DollarSign },
+  { label: 'Agenda',     href: '/agenda',    icon: CalendarDays },
+  { label: 'Serviços',   href: '/services',  icon: Package },
+  // Leads do formulário do site. As telas legadas (/clients, /legacy/quotes,
+  // /legacy/projects, /finance/transactions) seguem acessíveis por rota direta
+  // e pelos atalhos das telas novas, sem destaque no menu.
+  { label: 'Leads do site', href: '/leads',  icon: Users },
 ]
 
 const BOTTOM_ITEMS: NavItem[] = [

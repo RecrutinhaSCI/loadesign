@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -21,19 +21,32 @@ const sizeMap = {
   xl: 'max-w-4xl',
 }
 
+const modalStack: symbol[] = []
+
 export function Modal({ open, onClose, title, description, children, size = 'md', footer }: ModalProps) {
-  // Close on Escape
+  // Pilha de modais: Esc fecha apenas o que está por cima; o scroll do body
+  // só é liberado quando o último modal fecha.
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
   useEffect(() => {
     if (!open) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const id = Symbol('modal')
+    modalStack.push(id)
+    document.body.style.overflow = 'hidden'
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && modalStack[modalStack.length - 1] === id) {
+        e.stopPropagation()
+        onCloseRef.current()
+      }
+    }
     window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [open, onClose])
-
-  // Lock scroll
-  useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      window.removeEventListener('keydown', handler)
+      const i = modalStack.indexOf(id)
+      if (i >= 0) modalStack.splice(i, 1)
+      if (modalStack.length === 0) document.body.style.overflow = ''
+    }
   }, [open])
 
   return (
@@ -58,6 +71,9 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
             className={cn(
               'relative w-full bg-dark-card border border-dark-border rounded-2xl shadow-modal',
               'flex flex-col max-h-[90vh]',
@@ -75,7 +91,7 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
                     <p className="text-sm text-white/40 mt-0.5">{description}</p>
                   )}
                 </div>
-                <Button variant="ghost" size="icon" onClick={onClose}>
+                <Button variant="ghost" size="icon" onClick={onClose} aria-label="Fechar">
                   <X size={16} />
                 </Button>
               </div>
@@ -84,7 +100,7 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
             {/* Close button when no header */}
             {!title && !description && (
               <div className="absolute top-4 right-4">
-                <Button variant="ghost" size="icon" onClick={onClose}>
+                <Button variant="ghost" size="icon" onClick={onClose} aria-label="Fechar">
                   <X size={16} />
                 </Button>
               </div>

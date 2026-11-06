@@ -1,0 +1,5 @@
+# Migrations Prisma: bytes preservados exatamente como validados (sem conversão
+# de final de linha). O Prisma registra o checksum de cada migration aplicada;
+# qualquer conversão CRLF/LF entre Windows e Linux alteraria esse checksum.
+Backend/prisma/migrations/** -text
+Backend/prisma/rollback/** -text

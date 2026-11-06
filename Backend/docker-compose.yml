@@ -1,32 +1,55 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Postgres local para desenvolvimento — Loa Design Backend
+# PostgreSQL LOCAL e DESCARTÁVEL — Loa Design Backend (somente desenvolvimento
+# e testes automatizados). Nunca aponte este ambiente para produção.
 #
-# Subir:    docker compose up -d
-# Parar:    docker compose down
-# Reset:    docker compose down -v   (apaga volume = perde dados)
+#   Subir:    docker compose up -d          (rodar dentro de Backend/)
+#   Status:   docker compose ps             (aguarde "healthy")
+#   Parar:    docker compose down           (mantém os dados)
+#   Apagar:   docker compose down -v        (remove SÓ o volume deste projeto)
 #
-# DATABASE_URL para .env:
-#   postgresql://loa:loa@localhost:5432/loadesign?schema=public
+# Isolamento:
+#   - Projeto compose, container e volume com nomes exclusivos "loadesign-local".
+#   - Porta publicada apenas em 127.0.0.1 (não exposta na rede) e incomum
+#     (55432) para não colidir com outro PostgreSQL instalado na máquina.
+#   - Usuário próprio e fictício; nenhuma relação com credenciais reais.
+#   - Dois bancos: loadesign_dev (desenvolvimento) e loadesign_test (testes),
+#     o segundo criado por docker/postgres/init na PRIMEIRA inicialização.
+#
+# URLs (.env / .env.test):
+#   postgresql://loa_local:loa_local_dev@localhost:55432/loadesign_dev?schema=public
+#   postgresql://loa_local:loa_local_dev@localhost:55432/loadesign_test?schema=public
+#
+# O docker-compose.yml da RAIZ do repositório (porta 5433) é legado e não é
+# usado por este backend.
 # ─────────────────────────────────────────────────────────────────────────────
+
+name: loadesign-local
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: loa-postgres
-    restart: unless-stopped
+    container_name: loadesign-local-postgres
+    restart: "no"
     environment:
-      POSTGRES_USER: loa
-      POSTGRES_PASSWORD: loa
-      POSTGRES_DB: loadesign
+      POSTGRES_USER: loa_local
+      POSTGRES_PASSWORD: loa_local_dev
+      POSTGRES_DB: loadesign_dev
     ports:
-      - "5432:5432"
+      - "127.0.0.1:55432:5432"
     volumes:
-      - loa_pgdata:/var/lib/postgresql/data
+      - loadesign_local_pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    labels:
+      com.loadesign.project: "loadesign"
+      com.loadesign.purpose: "local-dev-and-test-only"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U loa -d loadesign"]
+      test: ["CMD-SHELL", "pg_isready -U loa_local -d loadesign_dev && pg_isready -U loa_local -d loadesign_test"]
       interval: 5s
       timeout: 3s
-      retries: 5
+      retries: 10
 
 volumes:
-  loa_pgdata:
+  loadesign_local_pgdata:
+    name: loadesign_local_pgdata
+    labels:
+      com.loadesign.project: "loadesign"

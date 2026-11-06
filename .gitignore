@@ -17,6 +17,8 @@ build/
 */.env.local
 */.env.production
 */.env.development
+.env.test
+*/.env.test
 
 # prisma/local db
 *.db
@@ -35,3 +37,19 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+# backups e relatórios de inspeção de produção (nunca versionar)
+*.dump
+*/*.dump
+neon-catalog*.json
+*/neon-catalog*.json
+
+# credencial local de inspeção somente leitura (nunca versionar)
+.env.inspect
+*/.env.inspect
+
+# backups locais de produção (nunca versionar)
+Backend/backups/
+
+# credencial da sessão de migração (nunca versionar)
+.env.migrate
+*/.env.migrate

@@ -56,7 +56,7 @@ export function ProjectsPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Projetos"
+        title="Projetos (legado)"
         description="Gerencie os projetos em andamento e entregues"
         actions={
           <Button variant="primary" size="sm" leftIcon={<Plus size={13} />} onClick={handleNew}>

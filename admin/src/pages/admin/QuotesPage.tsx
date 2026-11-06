@@ -36,7 +36,7 @@ export function QuotesPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Orçamentos"
+        title="Orçamentos (legado)"
         description="Propostas enviadas e em andamento"
         actions={
           <Button variant="primary" size="sm" leftIcon={<Plus size={13} />} onClick={handleNew}>

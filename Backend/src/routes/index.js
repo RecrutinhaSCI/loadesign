@@ -32,4 +32,13 @@ router.use("/projects",     require("./projects.routes"));
 router.use("/quotes",       require("./quotes.routes"));
 router.use("/transactions", require("./transactions.routes"));
 
+// ── Fluxo comercial integrado (admin) ────────────────────────────────────────
+router.use("/contacts",      require("./contacts.routes"));
+router.use("/proposals",     require("./proposals.routes"));
+router.use("/work-projects", require("./workProjects.routes"));
+router.use("/receivables",   require("./receivables.routes"));
+router.use("/recurring",     require("./recurring.routes"));
+router.use("/calendar",      require("./calendar.routes"));
+router.use("/dashboard",     require("./dashboard.routes"));
+
 module.exports = router;

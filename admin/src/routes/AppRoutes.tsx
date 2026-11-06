@@ -11,6 +11,11 @@ import { QuotesPage }      from '@/pages/admin/QuotesPage'
 import { FinancePage }     from '@/pages/admin/FinancePage'
 import { SettingsPage }    from '@/pages/admin/SettingsPage'
 import { NotFoundPage }    from '@/pages/NotFoundPage'
+import { ContactsPage }    from '@/pages/admin/ContactsPage'
+import { ProposalsPage }   from '@/pages/admin/ProposalsPage'
+import { CommercialProjectsPage } from '@/pages/admin/CommercialProjectsPage'
+import { ReceivablesPage } from '@/pages/admin/ReceivablesPage'
+import { AgendaPage }      from '@/pages/admin/AgendaPage'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // App Router
@@ -32,12 +37,20 @@ export function AppRoutes() {
       >
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="leads"     element={<LeadsPage />}     />
-        <Route path="projects"  element={<ProjectsPage />}  />
-        <Route path="clients"   element={<ClientsPage />}   />
+        {/* Fluxo comercial integrado */}
+        <Route path="contacts"  element={<ContactsPage />}  />
+        <Route path="proposals" element={<ProposalsPage />} />
+        <Route path="projects"  element={<CommercialProjectsPage />} />
+        <Route path="finance"   element={<ReceivablesPage />} />
+        <Route path="finance/transactions" element={<FinancePage />} />
+        <Route path="agenda"    element={<AgendaPage />}    />
         <Route path="services"  element={<ServicesPage />}  />
-        <Route path="quotes"    element={<QuotesPage />}    />
-        <Route path="finance"   element={<FinancePage />}   />
+        {/* Módulos legados (preservados) */}
+        <Route path="leads"     element={<LeadsPage />}     />
+        <Route path="clients"   element={<ClientsPage />}   />
+        <Route path="legacy/projects" element={<ProjectsPage />} />
+        <Route path="legacy/quotes"   element={<QuotesPage />}   />
+        <Route path="quotes"    element={<Navigate to="/proposals" replace />} />
         <Route path="settings"  element={<SettingsPage />}  />
       </Route>
 
