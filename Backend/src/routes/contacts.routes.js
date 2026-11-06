@@ -11,9 +11,11 @@ router.use(...guard);
 router.get("/", ok((req) => svc.list(req.query)));
 router.get("/duplicates", ok((req) => svc.checkDuplicates(req.query)));
 router.get("/legacy-import", ok(() => legacy.preview()));
+// Prévia com telefones corrigidos (somente leitura — nada é gravado).
+router.post("/legacy-import/preview", ok((req) => legacy.preview(req.body?.phones)));
 router.post("/legacy-import", ok((req) => {
   if (req.body?.confirm !== true) throw ApiError.badRequest("Confirme a importação com { confirm: true }.");
-  return legacy.apply(req.user);
+  return legacy.apply(req.user, req.body?.phones);
 }, "Importação concluída."));
 router.get("/:id", ok((req) => svc.get(req.params.id)));
 router.post("/", made((req) => svc.create(req.body, req.user), "Contato cadastrado."));

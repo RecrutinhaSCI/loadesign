@@ -271,9 +271,9 @@ export interface DashboardOverview {
 }
 
 export interface LegacyImportReport {
-  summary: { leads: number; clients: number; alreadyImported: number; ready: number; conflicts: number; withoutPhone: number }
-  ready: Array<{ phoneNormalized: string; email: string | null; records: Array<{ kind: 'lead' | 'client'; id: string; name: string; email: string | null }> }>
+  summary: { leads: number; clients: number; alreadyImported: number; ready: number; conflicts: number; withoutPhone: number; phonesCorrected?: number }
+  ready: Array<{ phoneNormalized: string; email: string | null; phoneOverridden?: boolean; records: Array<{ kind: 'lead' | 'client'; id: string; name: string; email: string | null; phoneOverridden?: boolean }> }>
   conflicts: Array<{ phoneNormalized: string; reasons: string[]; records: Array<{ kind: 'lead' | 'client'; id: string; name: string; email: string | null }> }>
-  withoutPhone: Array<{ kind: 'lead' | 'client'; id: string; name: string }>
+  withoutPhone: Array<{ kind: 'lead' | 'client'; id: string; name: string; email?: string | null }>
   created?: number
 }
