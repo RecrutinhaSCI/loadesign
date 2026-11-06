@@ -501,3 +501,49 @@ test("regressão: rotas legadas continuam respondendo com o fluxo novo ativo", a
   const tx = (await api.get("/api/transactions")).body.data;
   assert.ok(tx.some((t) => t.category === "Recebimentos"), "baixas aparecem no financeiro legado");
 });
+
+test("importação de legados: telefone informado na prévia para registro sem telefone", async () => {
+  const semFone = await prisma.lead.findFirst({ where: { name: "Sem Fone" } });
+  assert.ok(semFone, "registro sem telefone do teste anterior");
+  const key = `lead:${semFone.id}`;
+  const before = await prisma.contact.count();
+
+  // validações: chave desconhecida, telefone inválido, formato inválido → 400 e nada gravado
+  await api.post("/api/contacts/legacy-import/preview", { phones: { "lead:inexistente": "54999990000" } }).expect(400);
+  await api.post("/api/contacts/legacy-import/preview", { phones: { [key]: "123" } }).expect(400);
+  await api.post("/api/contacts/legacy-import/preview", { phones: ["x"] }).expect(400);
+  await api.post("/api/contacts/legacy-import", { confirm: true, phones: { [key]: "abc" } }).expect(400);
+  assert.equal(await prisma.contact.count(), before);
+
+  // prévia com telefone corrigido: passa a "pronto", sem gravar
+  const p = (await api.post("/api/contacts/legacy-import/preview", { phones: { [key]: "(54) 90000-1099" } }).expect(200)).body.data;
+  assert.equal(p.summary.withoutPhone, 0);
+  assert.equal(p.summary.phonesCorrected, 1);
+  const g = p.ready.find((r) => r.phoneNormalized === "54900001099");
+  assert.ok(g && g.phoneOverridden);
+  assert.equal(await prisma.contact.count(), before, "prévia não grava");
+
+  // campo vazio = deixar para depois (continua sem telefone)
+  const later = (await api.post("/api/contacts/legacy-import/preview", { phones: { [key]: "" } }).expect(200)).body.data;
+  assert.equal(later.summary.withoutPhone, 1);
+
+  // telefone corrigido que colide com contato existente vira conflito (sem duplicar)
+  const rita = await prisma.contact.findFirst({ where: { phoneNormalized: "54900001001" } });
+  assert.ok(rita);
+  const clash = (await api.post("/api/contacts/legacy-import/preview", { phones: { [key]: "54900001001" } }).expect(200)).body.data;
+  assert.ok(clash.conflicts.some((c) => c.phoneNormalized === "54900001001"));
+
+  // importação com telefone corrigido: cria o contato; o lead legado não muda
+  const applied = (await api.post("/api/contacts/legacy-import", { confirm: true, phones: { [key]: "(54) 90000-1099" } }).expect(200)).body.data;
+  assert.ok(applied.created >= 1);
+  const c = await prisma.contact.findFirst({ where: { legacyLeadId: semFone.id } });
+  assert.equal(c.phoneNormalized, "54900001099");
+  assert.equal((await prisma.lead.findUnique({ where: { id: semFone.id } })).phone, semFone.phone, "legado intacto");
+  const log = await prisma.activityLog.findFirst({ where: { entityId: c.id, action: "imported" } });
+  assert.match(log.message, /telefone informado/);
+
+  // idempotente: repetir não duplica e o registro não pode mais receber telefone
+  const again = (await api.post("/api/contacts/legacy-import", { confirm: true }).expect(200)).body.data;
+  assert.equal(again.created, 0);
+  await api.post("/api/contacts/legacy-import/preview", { phones: { [key]: "54900001099" } }).expect(400);
+});

@@ -25,8 +25,11 @@ export const contactsApi = {
   archive: (id: string) => api.post<Contact>(`/contacts/${id}/archive`),
   unarchive: (id: string) => api.post<Contact>(`/contacts/${id}/unarchive`),
   duplicates: (q: { phone?: string; email?: string; excludeId?: string }) => api.get<DuplicateCandidate[]>(`/contacts/duplicates${qs(q)}`),
-  legacyPreview: () => api.get<LegacyImportReport>('/contacts/legacy-import'),
-  legacyApply: () => api.post<LegacyImportReport>('/contacts/legacy-import', { confirm: true }),
+  // Prévia somente leitura; com telefones corrigidos, simula o resultado (POST sem gravação).
+  legacyPreview: (phones?: Record<string, string>) => phones && Object.keys(phones).length
+    ? api.post<LegacyImportReport>('/contacts/legacy-import/preview', { phones })
+    : api.get<LegacyImportReport>('/contacts/legacy-import'),
+  legacyApply: (phones?: Record<string, string>) => api.post<LegacyImportReport>('/contacts/legacy-import', { confirm: true, phones }),
 }
 
 export const proposalsApi = {
