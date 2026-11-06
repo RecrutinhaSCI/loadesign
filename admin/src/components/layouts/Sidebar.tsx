@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Users, Briefcase, Package,
   FileText, DollarSign, Settings, ChevronLeft, Contact, CalendarDays,
-  X, Sparkles,
+  X, Sparkles, Inbox,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/store/ui.store'
@@ -25,6 +25,7 @@ const BASE_NAV: NavItem[] = [
   // /legacy/projects, /finance/transactions) seguem acessíveis por rota direta
   // e pelos atalhos das telas novas, sem destaque no menu.
   { label: 'Leads do site', href: '/leads',  icon: Users },
+  { label: 'Mensagens do site', href: '/messages', icon: Inbox },
 ]
 
 const BOTTOM_ITEMS: NavItem[] = [

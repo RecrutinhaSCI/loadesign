@@ -102,11 +102,13 @@ interface ConfirmDialogProps {
   danger?: boolean
   reason?: 'none' | 'optional' | 'required'
   reasonLabel?: string
+  /** Texto exibido quando não há motivo. `null` oculta (ex.: ação sem histórico). */
+  note?: string | null
   onClose: () => void
   onConfirm: (reason: string) => Promise<void>
 }
 
-export function ConfirmDialog({ open, title, description, confirmLabel = 'Confirmar', danger, reason = 'none', reasonLabel = 'Motivo', onClose, onConfirm }: ConfirmDialogProps) {
+export function ConfirmDialog({ open, title, description, confirmLabel = 'Confirmar', danger, reason = 'none', reasonLabel = 'Motivo', note, onClose, onConfirm }: ConfirmDialogProps) {
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -138,7 +140,7 @@ export function ConfirmDialog({ open, title, description, confirmLabel = 'Confir
         {reason !== 'none' && (
           <Textarea label={`${reasonLabel}${reason === 'optional' ? ' (opcional)' : ''}`} value={text} onChange={(e) => setText(e.target.value)} rows={3} autoFocus />
         )}
-        {reason === 'none' && <p className="text-sm text-white/60">Esta ação ficará registrada no histórico.</p>}
+        {reason === 'none' && note !== null && <p className="text-sm text-white/60">{note ?? 'Esta ação ficará registrada no histórico.'}</p>}
         <FormError message={error} />
       </div>
     </Modal>
