@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 const prisma = require("../config/prisma");
 const ApiError = require("../utils/ApiError");
 const asyncHandler = require("../utils/asyncHandler");
-const { signAccessToken } = require("../utils/jwt");
+const { signAccessToken, sessionVersion } = require("../utils/jwt");
 const { success } = require("../utils/response");
 
 function sanitize(user) {
@@ -40,6 +40,7 @@ const login = asyncHandler(async (req, res) => {
     sub: user.id,
     email: user.email,
     role: user.role,
+    sv: sessionVersion(user.password),
   });
 
   return success(res, {
@@ -76,11 +77,16 @@ const changePassword = asyncHandler(async (req, res) => {
 
   const valid = await bcrypt.compare(currentPassword, user.password);
   if (!valid) throw ApiError.unauthorized("Senha atual incorreta.");
+  if (await bcrypt.compare(newPassword, user.password)) {
+    throw ApiError.badRequest("A nova senha precisa ser diferente da atual.");
+  }
 
   const newHash = await bcrypt.hash(newPassword, 10);
   await prisma.user.update({ where: { id: user.id }, data: { password: newHash } });
 
-  return success(res, null, "Senha alterada com sucesso.");
+  // O hash novo muda a versão de sessão: todos os tokens anteriores (inclusive
+  // o desta requisição) deixam de valer. O painel faz logout em seguida.
+  return success(res, null, "Senha alterada com sucesso. Entre novamente.");
 });
 
 module.exports = { login, me, changePassword };

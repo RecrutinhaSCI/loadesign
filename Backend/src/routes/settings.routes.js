@@ -8,7 +8,7 @@ const prisma = require("../config/prisma");
 const asyncHandler = require("../utils/asyncHandler");
 const { success } = require("../utils/response");
 const { parseJson, serializeJson } = require("../utils/jsonField");
-const { requireAuth } = require("../middlewares/auth");
+const { requireAdmin } = require("../middlewares/auth");
 
 const router = Router();
 
@@ -34,7 +34,7 @@ router.get("/", asyncHandler(async (_req, res) => {
   return success(res, out(settings));
 }));
 
-router.put("/", requireAuth, asyncHandler(async (req, res) => {
+router.put("/", ...requireAdmin, asyncHandler(async (req, res) => {
   const body = req.body || {};
   const data = { ...body };
   delete data.id;
@@ -49,7 +49,7 @@ router.put("/", requireAuth, asyncHandler(async (req, res) => {
   return success(res, out(settings), "Configurações salvas.");
 }));
 
-router.patch("/", requireAuth, asyncHandler(async (req, res) => {
+router.patch("/", ...requireAdmin, asyncHandler(async (req, res) => {
   const body = req.body || {};
   const data = { ...body };
   delete data.id;

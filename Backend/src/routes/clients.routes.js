@@ -2,7 +2,7 @@
 const { Router } = require("express");
 const prisma = require("../config/prisma");
 const { createCrudController } = require("../controllers/crudFactory");
-const { requireAuth } = require("../middlewares/auth");
+const { requireAdmin } = require("../middlewares/auth");
 
 const router = Router();
 
@@ -16,7 +16,7 @@ const ctrl = createCrudController({
   },
 });
 
-router.use(requireAuth);
+router.use(...requireAdmin);
 router.get("/", ctrl.list);
 router.get("/:id", ctrl.show);
 router.post("/", ctrl.create);

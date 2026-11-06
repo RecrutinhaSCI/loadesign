@@ -129,3 +129,94 @@ test("papel vem do banco: usuário sem papel administrativo não acessa o fluxo 
   const t2 = (await login(legacyAdmin.email, legacyAdmin.password)).body.data.tokens.accessToken;
   await request(app).get("/api/contacts").set("Authorization", `Bearer ${t2}`).expect(200);
 });
+
+// ─── Sprint final: rate limit, invalidação de sessão, papel nas rotas legadas ──
+const { loginRateLimit } = require("../support/app");
+
+test("limite de login: 5 falhas por conta bloqueiam com 429 + Retry-After; sucesso zera", async () => {
+  loginRateLimit.reset();
+  const u = await createUser();
+  for (let i = 0; i < 5; i++) await login(u.email, `errada-${i}-000000`).expect(401);
+  const blocked = await login(u.email, u.password).expect(429);
+  assert.ok(Number(blocked.headers["retry-after"]) > 0);
+  assert.equal(blocked.body.success, false);
+  // outra conta no mesmo IP continua podendo entrar
+  const other = await createUser();
+  await login(other.email, other.password).expect(200);
+  loginRateLimit.reset();
+  await login(u.email, u.password).expect(200);
+  // sucesso zera o contador daquela conta
+  for (let i = 0; i < 4; i++) await login(u.email, `errada-${i}-000000`).expect(401);
+  await login(u.email, u.password).expect(200);
+  for (let i = 0; i < 4; i++) await login(u.email, `errada-${i}-000000`).expect(401);
+  await login(u.email, u.password).expect(200);
+  loginRateLimit.reset();
+});
+
+test("limite de login por IP: 20 falhas em contas variadas bloqueiam o IP", async () => {
+  loginRateLimit.reset();
+  for (let i = 0; i < 20; i++) await login(`ninguem${i}@example.test`, "qualquer-coisa-000").expect(401);
+  await login(admin.email, admin.password).expect(429);
+  loginRateLimit.reset();
+  await login(admin.email, admin.password).expect(200);
+});
+
+test("troca de senha invalida TODOS os tokens anteriores; novo login funciona", async () => {
+  loginRateLimit.reset();
+  const u = await createUser();
+  const t1 = (await login(u.email, u.password)).body.data.tokens.accessToken;
+  const t2 = (await login(u.email, u.password)).body.data.tokens.accessToken;
+  await request(app).get("/api/auth/me").set("Authorization", `Bearer ${t1}`).expect(200);
+  const novaSenha = "outra-senha-sintetica-456";
+  await request(app).post("/api/auth/change-password").set("Authorization", `Bearer ${t1}`)
+    .send({ currentPassword: u.password, newPassword: novaSenha }).expect(200);
+  for (const t of [t1, t2]) {
+    for (const url of ["/api/auth/me", "/api/clients", "/api/contacts"]) {
+      await request(app).get(url).set("Authorization", `Bearer ${t}`).expect(401);
+    }
+  }
+  const t3 = (await login(u.email, novaSenha).expect(200)).body.data.tokens.accessToken;
+  await request(app).get("/api/contacts").set("Authorization", `Bearer ${t3}`).expect(200);
+});
+
+test("redefinição administrativa direta no banco também invalida as sessões", async () => {
+  loginRateLimit.reset();
+  const u = await createUser();
+  const t = (await login(u.email, u.password)).body.data.tokens.accessToken;
+  const bcrypt = require("bcryptjs");
+  await prisma.user.update({ where: { id: u.user.id }, data: { password: await bcrypt.hash("redefinida-sintetica-789", 4) } });
+  await request(app).get("/api/auth/me").set("Authorization", `Bearer ${t}`).expect(401);
+});
+
+test("token assinado corretamente mas sem versão de sessão (emitido antes) é recusado", async () => {
+  const old = jwt.sign({ sub: admin.user.id, email: admin.email, role: "ADMIN" }, process.env.JWT_SECRET);
+  await request(app).get("/api/auth/me").set("Authorization", `Bearer ${old}`).expect(401);
+  const fake = jwt.sign({ sub: admin.user.id, sv: "x".repeat(22) }, process.env.JWT_SECRET);
+  await request(app).get("/api/auth/me").set("Authorization", `Bearer ${fake}`).expect(401);
+  const none = jwt.sign({ sub: admin.user.id }, "", { algorithm: "none" });
+  await request(app).get("/api/auth/me").set("Authorization", `Bearer ${none}`).expect(401);
+});
+
+test("nova senha igual à atual é recusada", async () => {
+  loginRateLimit.reset();
+  const u = await createUser();
+  const t = (await login(u.email, u.password)).body.data.tokens.accessToken;
+  await request(app).post("/api/auth/change-password").set("Authorization", `Bearer ${t}`)
+    .send({ currentPassword: u.password, newPassword: u.password }).expect(400);
+});
+
+test("rotas administrativas legadas exigem papel administrativo (403 para outros papéis)", async () => {
+  loginRateLimit.reset();
+  const u = await createUser({ role: "VIEWER" });
+  const auth = { Authorization: `Bearer ${(await login(u.email, u.password)).body.data.tokens.accessToken}` };
+  for (const [m, url] of [["get", "/api/clients"], ["get", "/api/leads"], ["get", "/api/quotes"], ["get", "/api/projects"],
+    ["get", "/api/transactions"], ["get", "/api/services"], ["post", "/api/testimonials"], ["post", "/api/portfolio"], ["put", "/api/settings"]]) {
+    const r = await request(app)[m](url).set(auth).send({});
+    assert.equal(r.status, 403, `${m.toUpperCase()} ${url}`);
+  }
+  // o próprio usuário ainda consulta /auth/me
+  await request(app).get("/api/auth/me").set(auth).expect(200);
+  // rotas públicas continuam públicas
+  await request(app).get("/api/settings").expect(200);
+  await request(app).get("/api/services/public").expect(200);
+});

@@ -12,7 +12,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const { success } = require("../utils/response");
 const { createCrudController } = require("../controllers/crudFactory");
 const { parseJson, serializeJson } = require("../utils/jsonField");
-const { requireAuth } = require("../middlewares/auth");
+const { requireAdmin } = require("../middlewares/auth");
 
 const router = Router();
 
@@ -50,7 +50,7 @@ const ctrl = createCrudController({
 });
 
 // Todas as rotas abaixo são protegidas
-router.use(requireAuth);
+router.use(...requireAdmin);
 router.get("/", ctrl.list);
 router.get("/:id", ctrl.show);
 router.post("/", ctrl.create);

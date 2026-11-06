@@ -18,6 +18,10 @@ const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
+// Atrás do proxy do Render: confia em UM salto para obter o IP real do cliente
+// (X-Forwarded-For), usado pelo limite de tentativas de login.
+app.set("trust proxy", 1);
+
 // ── Segurança ─────────────────────────────────────────────────────────────────
 app.use(helmet());
 
