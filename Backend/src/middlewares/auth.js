@@ -4,11 +4,14 @@
 //               requisição: usuário removido ou desativado perde o acesso na
 //               hora, sem esperar o JWT expirar. O papel vem do banco (não do
 //               token), então mudanças de papel também valem imediatamente.
+//               Trocar a senha invalida todos os tokens anteriores (versão de
+//               sessão "sv" no token, derivada do hash atual — ver utils/jwt).
 // requireRole → restringe por papel (comparação sem diferenciar maiúsculas).
+// requireAdmin → requireAuth + papel administrativo (ADMIN / SUPER_ADMIN).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ApiError = require("../utils/ApiError");
-const { verifyAccessToken } = require("../utils/jwt");
+const { verifyAccessToken, sessionVersionMatches } = require("../utils/jwt");
 const prisma = require("../config/prisma");
 
 async function requireAuth(req, _res, next) {
@@ -32,9 +35,11 @@ async function requireAuth(req, _res, next) {
 
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { id: true, email: true, role: true, active: true },
+      select: { id: true, email: true, role: true, active: true, password: true },
     });
-    if (!user || !user.active) {
+    // Usuário removido/desativado ou senha trocada depois da emissão do token
+    // (versão de sessão diferente) → a sessão deixa de valer na hora.
+    if (!user || !user.active || !sessionVersionMatches(payload.sv, user.password)) {
       throw ApiError.unauthorized("Sessão encerrada. Faça login novamente.");
     }
 
@@ -56,4 +61,7 @@ function requireRole(...roles) {
   };
 }
 
-module.exports = { requireAuth, requireRole };
+const ADMIN_ROLES = ["ADMIN", "SUPER_ADMIN"];
+const requireAdmin = [requireAuth, requireRole(...ADMIN_ROLES)];
+
+module.exports = { requireAuth, requireRole, requireAdmin, ADMIN_ROLES };

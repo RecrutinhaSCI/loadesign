@@ -13,6 +13,7 @@ applyTestEnv();
 const bcrypt = require("bcryptjs");
 const app = require("../../src/server");
 const prisma = require("../../src/config/prisma");
+const { loginRateLimit } = require("../../src/middlewares/loginRateLimit");
 
 /**
  * 2) Guard por conexão real: confirma no próprio PostgreSQL que a sessão
@@ -66,4 +67,4 @@ async function createUser({ active = true, role = "ADMIN" } = {}) {
 
 const { todayBR } = require("../../src/utils/dates");
 
-module.exports = { app, prisma, assertConnectedToTestDb, resetDatabase, createUser, todayBR };
+module.exports = { app, prisma, assertConnectedToTestDb, resetDatabase, createUser, todayBR, loginRateLimit };

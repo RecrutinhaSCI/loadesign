@@ -11,6 +11,20 @@ const pkg = JSON.parse(read("package.json"));
 const scripts = pkg.scripts || {};
 const render = read("render.yaml");
 
+// Credenciais de demonstração já publicadas, por impressão SHA-256 (o valor
+// não aparece no código). Procura em todos os textos entre aspas.
+const KNOWN_CREDENTIAL_FINGERPRINTS = new Set(["240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"]);
+function hasKnownCredential(src) {
+  const sha = (x) => require("crypto").createHash("sha256").update(x).digest("hex");
+  for (let i = 0; i < src.length; i++) {
+    const q = src[i];
+    if (q !== '"' && q !== "'" && q !== "`" && q !== "/") continue;
+    const j = src.indexOf(q, i + 1);
+    if (j > i + 1 && j - i - 1 <= 200 && KNOWN_CREDENTIAL_FINGERPRINTS.has(sha(src.slice(i + 1, j)))) return true;
+  }
+  return false;
+}
+
 const DB_WRITE = /prisma\s+(migrate\s+(deploy|dev|reset|resolve)|db\s+(push|seed|execute|pull))|--accept-data-loss|--force-reset/;
 
 function walk(dir, out = []) {
@@ -101,7 +115,7 @@ test("seed de demo: travado, sem senha fixa, sem redefinir senha, sem sobrescrev
   const src = code(read("prisma/seed.demo.js"));
   assert.match(src, /assertSafeDatabaseEnv\(process\.env, \{ alwaysEnforce: true \}\)/);
   assert.match(src, /DEMO_SEED_CONFIRM_DB/);
-  assert.doesNotMatch(src, /admin123/);
+  assert.ok(!hasKnownCredential(src), "seed contém credencial de demonstração conhecida");
   assert.doesNotMatch(src, /update:\s*\{\s*password/);
   assert.doesNotMatch(src, /update:\s*fields/);
   assert.doesNotMatch(src, /\$\{\s*(DEMO_ADMIN_PASSWORD|adminPlain)/);
@@ -116,7 +130,7 @@ test("nenhuma credencial fixa no código do backend", () => {
   for (const f of files) {
     const src = fs.readFileSync(f, "utf8");
     const rel = path.relative(ROOT, f);
-    assert.doesNotMatch(src, /admin123/, rel);
+    assert.ok(!hasKnownCredential(src), `${rel}: contém credencial de demonstração conhecida`);
     assert.doesNotMatch(src, /bcrypt\.hash\(\s*["'`]/, `${rel}: hash de senha literal`);
     // URL postgres com credenciais para host não local
     const urls = src.match(/postgres(?:ql)?:\/\/[^\s"'`]+/g) || [];
