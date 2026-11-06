@@ -9,8 +9,8 @@ import { Input } from '@/components/ui/Input'
 export function LoginPage() {
   const { login, isAuthenticated, isLoading, error, clearError } = useAuthStore()
 
-  const [email,    setEmail]    = useState('admin@loadesign.com')
-  const [password, setPassword] = useState('admin123')
+  const [email,    setEmail]    = useState('')
+  const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
 
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
@@ -95,12 +95,12 @@ export function LoginPage() {
             <Input
               label="E-mail"
               type="email"
-              placeholder="admin@loadesign.com"
+              placeholder="seu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               leftIcon={<Mail size={14} />}
               required
-              autoComplete="email"
+              autoComplete="username"
             />
             <Input
               label="Senha"
