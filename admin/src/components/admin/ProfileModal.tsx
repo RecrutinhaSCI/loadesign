@@ -15,7 +15,7 @@ export function ProfileModal({ open, onClose }: ProfileModalProps) {
   const { user } = useAuthStore()
 
   const name  = user?.name  ?? 'Loa'
-  const email = user?.email ?? 'admin@loadesign.com'
+  const email = user?.email ?? ''
   const role  = user?.role  ?? 'ADMIN'
 
   const goSettings = () => {

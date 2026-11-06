@@ -56,7 +56,7 @@ function ProfileDropdown({ onOpenProfile }: { onOpenProfile: () => void }) {
   }, [open])
 
   const displayName  = user?.name  ?? 'Loa'
-  const displayEmail = user?.email ?? 'admin@loadesign.com'
+  const displayEmail = user?.email ?? ''
 
   const handleProfile = () => { setOpen(false); onOpenProfile() }
   const handleSettings = () => { setOpen(false); navigate('/settings') }
