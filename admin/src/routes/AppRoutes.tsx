@@ -16,6 +16,7 @@ import { ProposalsPage }   from '@/pages/admin/ProposalsPage'
 import { CommercialProjectsPage } from '@/pages/admin/CommercialProjectsPage'
 import { ReceivablesPage } from '@/pages/admin/ReceivablesPage'
 import { AgendaPage }      from '@/pages/admin/AgendaPage'
+import { MessagesPage }    from '@/pages/admin/MessagesPage'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // App Router
@@ -47,6 +48,7 @@ export function AppRoutes() {
         <Route path="services"  element={<ServicesPage />}  />
         {/* Módulos legados (preservados) */}
         <Route path="leads"     element={<LeadsPage />}     />
+        <Route path="messages"  element={<MessagesPage />}  />
         <Route path="clients"   element={<ClientsPage />}   />
         <Route path="legacy/projects" element={<ProjectsPage />} />
         <Route path="legacy/quotes"   element={<QuotesPage />}   />
