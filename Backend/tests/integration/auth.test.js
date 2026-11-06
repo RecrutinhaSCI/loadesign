@@ -153,12 +153,37 @@ test("limite de login: 5 falhas por conta bloqueiam com 429 + Retry-After; suces
   loginRateLimit.reset();
 });
 
-test("limite de login por IP: 20 falhas em contas variadas bloqueiam o IP", async () => {
+// Simula a cadeia do Render: IP público do cliente + proxies internos variáveis.
+const loginVia = (xff, email, password) =>
+  request(app).post("/api/auth/login").set("X-Forwarded-For", xff).send({ email, password });
+
+test("limite de login por IP: 20 falhas do mesmo cliente bloqueiam só esse cliente", async () => {
   loginRateLimit.reset();
-  for (let i = 0; i < 20; i++) await login(`ninguem${i}@example.test`, "qualquer-coisa-000").expect(401);
-  await login(admin.email, admin.password).expect(429);
+  for (let i = 0; i < 20; i++) {
+    await loginVia(`203.0.113.40, 10.${i % 2 ? 26 : 31}.0.5`, `ninguem${i}@example.test`, "qualquer-coisa-000").expect(401);
+  }
+  await loginVia("203.0.113.40, 10.26.0.5", admin.email, admin.password).expect(429);
+  await loginVia("1.2.3.4, 203.0.113.40, 10.26.0.5", admin.email, admin.password).expect(429); // XFF falsificado não ajuda
+  await loginVia("198.51.100.41, 10.26.0.5", admin.email, admin.password).expect(200);           // outro cliente livre
   loginRateLimit.reset();
-  await login(admin.email, admin.password).expect(200);
+  await loginVia("203.0.113.40, 10.26.0.5", admin.email, admin.password).expect(200);
+});
+
+test("limite por conta não depende do IP: IPs e proxies variando → 6ª tentativa 429", async () => {
+  loginRateLimit.reset();
+  const u = await createUser();
+  for (let i = 0; i < 5; i++) {
+    await loginVia(`198.51.100.${10 + i}, 10.${i % 2 ? 26 : 31}.0.${i}`, u.email, `errada-${i}-000000`).expect(401);
+  }
+  await loginVia("192.0.2.200, 10.26.0.9", u.email, u.password).expect(429);
+  loginRateLimit.reset();
+});
+
+test("sem IP identificável (só proxies internos), falhas de terceiros não bloqueiam a conta da administradora", async () => {
+  loginRateLimit.reset();
+  for (let i = 0; i < 25; i++) await loginVia("10.26.0.50", `terceiro${i}@example.test`, "qualquer-coisa-000").expect(401);
+  await loginVia("10.26.0.50", admin.email, admin.password).expect(200);
+  loginRateLimit.reset();
 });
 
 test("troca de senha invalida TODOS os tokens anteriores; novo login funciona", async () => {
